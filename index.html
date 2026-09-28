@@ -35,7 +35,8 @@ nav{display:flex;gap:7px;padding:0;overflow-x:auto;overflow-y:hidden;background:
 button,.btn{border:0;border-radius:12px;padding:10px 12px;font-weight:700;background:#e9edff;color:#3730a3;cursor:pointer;white-space:nowrap}button.primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}
 .sort-active{background:#4f46e5!important;color:#fff!important}.date-filter{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 0}.date-filter input{padding:9px 10px;border:1px solid #dfe4f2;border-radius:10px;background:#fff;color:var(--text);font:inherit}.date-filter-label{font-size:12px;color:var(--muted);font-weight:700}
 main{max-width:760px;margin:auto;padding:8px 16px 100px}.hero{background:linear-gradient(135deg,#4f46e5,#7c3aed 55%,#ec4899);color:#fff;border-radius:22px;padding:20px;margin:4px 0 14px;box-shadow:0 12px 30px #6366f133}.hero h2{margin:0 0 5px;font-size:22px}.hero p{margin:0;opacity:.9;font-size:13px}
-.dash{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}.dashCard{display:flex;gap:10px;align-items:center;text-align:left;background:#fff;border:1px solid var(--line);padding:13px;border-radius:15px;box-shadow:0 4px 15px #26315b0a}.dashIcon{font-size:25px}.dashCard b{font-size:21px;display:block}.dashCard small{font-size:11px;color:var(--muted)}.nearby{background:linear-gradient(145deg,#fff,#ecfdf5)}.urgent{background:linear-gradient(145deg,#fff,#fff1f2)}.recent{background:linear-gradient(145deg,#fff,#fff7ed)}
+.dash{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
+@media(max-width:700px){.dash{grid-template-columns:1fr 1fr}}.dashCard{display:flex;gap:10px;align-items:center;text-align:left;background:#fff;border:1px solid var(--line);padding:13px;border-radius:15px;box-shadow:0 4px 15px #26315b0a}.dashIcon{font-size:25px}.dashCard b{font-size:21px;display:block}.dashCard small{font-size:11px;color:var(--muted)}.nearby{background:linear-gradient(145deg,#fff,#ecfdf5)}.urgent{background:linear-gradient(145deg,#fff,#fff1f2)}.recent{background:linear-gradient(145deg,#fff,#fff7ed)}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}.stat b{font-size:21px;display:block}.stat span{font-size:11px;color:var(--muted)}
 .card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:15px;margin:10px 0;box-shadow:0 5px 18px #26315b0b}.row{display:flex;justify-content:space-between;gap:10px}.name{font-size:18px;font-weight:800}.muted{color:var(--muted);font-size:13px}.tag{display:inline-block;background:#eef2ff;color:#4338ca;padding:5px 8px;border-radius:999px;font-size:12px;margin:6px 4px 0 0}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.danger{background:#fee2e2;color:var(--red)}.empty{text-align:center;color:var(--muted);padding:45px 10px}.status{padding:10px 12px;border-radius:12px;background:#f8fafc;margin:10px 0;font-size:13px}
 dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 20px 60px #0004}dialog::backdrop{background:#0006}.form{padding:20px}.form h2{margin-top:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin:9px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.field input,.field textarea,.field select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;font:inherit}.field textarea{min-height:90px}.wide{grid-column:1/-1}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
@@ -93,6 +94,7 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
     <div class="title-row"><h1 data-i18n="title">再訪問リスト</h1><input id="search" class="search" data-placeholder="search" placeholder="名前・場所・メモを検索"></div>
     <nav>
 <button class="primary" onclick="openForm()" data-i18n="new">＋ 新しい人</button>
+<button type="button" onclick="startVoiceImport()" data-i18n="voiceImport">🎙️ 音声から追加</button>
 <button onclick="setFilter('all')" data-i18n="all">すべて</button>
 <button onclick="setFilter('today')" data-i18n="today">今日</button>
 <button onclick="findNearby()" data-i18n="near">📍 現在地から近い順</button>
@@ -117,7 +119,6 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
 
 <main>
 <div class="dash">
-<button class="dashCard" onclick="setFilter('today')"><span class="dashIcon">📅</span><span><b id="todayCount">0</b><small data-i18n="todayPeople">今日訪問する人</small></span></button>
 <button class="dashCard nearby" onclick="findNearby()"><span class="dashIcon">📍</span><span><b id="nearbyCount">0</b><small data-i18n="nearPeople">現在地から近い人</small></span></button>
 <button class="dashCard urgent" onclick="setFilter('urgent')"><span class="dashIcon">⚡</span><span><b id="urgentCount">0</b><small data-i18n="urgentPeople">緊急訪問できる人</small></span></button>
 <button class="dashCard recent" onclick="setFilter('recent')"><span class="dashIcon">🕘</span><span><b id="recentCount">0</b><small data-i18n="recentPeople">最近会った人</small></span></button>
@@ -141,6 +142,16 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
 </section>
 </main>
 
+<dialog id="voiceDlg"><div class="form">
+<h2 data-i18n="voiceTitle">🎙️ 音声から新しい人を追加</h2>
+<p class="muted" data-i18n="voiceHelp">名前、場所、話した内容、次回訪問などを自然に話してください。音声を文字にして項目を自動整理します。</p>
+<div id="voiceStatus" class="status" data-i18n="voiceReady">マイクボタンを押して話してください。</div>
+<div class="field"><label data-i18n="transcript">認識した内容</label><textarea id="voiceTranscript" readonly></textarea></div>
+<div class="modal-actions">
+<button type="button" onclick="voiceDlg.close();stopVoice()" data-i18n="cancel">キャンセル</button>
+<button type="button" class="primary" id="voiceStartBtn" onclick="toggleVoice()" data-i18n="voiceStart">🎙️ 話す</button>
+</div></div></dialog>
+
 <dialog id="dlg"><form class="form" onsubmit="savePerson(event)">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px">
 <h2 id="dlgTitle" style="margin-bottom:0">新しい人</h2>
@@ -159,11 +170,92 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
 <script>
 const KEY="revisit-list-v1";
 const I18N={
-ja:{title:"再訪問リスト",new:"＋ 新しい人",all:"すべて",today:"今日",near:"📍 現在地から近い順",sortNew:"↓ 新しい順",sortOld:"↑ 古い順",from:"開始日",to:"終了日",clearRange:"期間を解除",urgent:"⚡ 緊急",recent:"最近",backup:"⬇️ バックアップ",restore:"⬆️ 復元",search:"名前・場所・メモを検索",heroTitle:"今日の再訪問をチェック 👋",heroText:"会った人・話したこと・次に訪問したい人を、ここにまとめておけます。",todayPeople:"今日訪問する人",nearPeople:"現在地から近い人",urgentPeople:"緊急訪問できる人",recentPeople:"最近会った人",dataTitle:"💾 データ管理",dataText:"この端末のデータをバックアップ・復元します。個人データはGitHubにアップロードしないでください。",name:"名前",visitDate:"訪問日",place:"場所",mapLink:"地図リンク",lat:"緯度",lon:"経度",saveCurrent:"現在地を取得して地図リンクも登録",interest:"宗教・関心など",nextDate:"次回訪問",notes:"メモ",tags:"タグ（カンマ区切り）",urgentFlag:"緊急訪問候補にする",cancel:"キャンセル",save:"保存",registered:"登録人数",todayRevisit:"今日の再訪問",nextTalk:"次回話す",noPeople:"該当する人はいません。",locationFail:"位置情報を取得できませんでした。iPhoneの位置情報許可を確認してください。",noCoords:"住所から位置情報を取得できた人がまだいません。もう一度実行すると続きから試します。",geocoding:"住所から位置情報を調べています…",geocoded:"件の住所の位置情報を取得しました。",nearDone:"近い順に表示しました。",gettingLocation:"現在地を取得しています…",locationFound:"現在地を取得しました",nearReady:"近い人を表示できます。",remaining:"件の住所はまだ位置情報を取得できません。",maps:"地図",edit:"編集",copy:"複製",delete:"削除",distance:"距離",noLoc:"場所未登録",saved:"現在地を登録しました。保存してください。",restored:"件を復元しました。"} ,
-en:{title:"Revisit List",new:"+ New Person",all:"All",today:"Today",near:"📍 Nearest First",sortNew:"↓ Newest first",sortOld:"↑ Oldest first",from:"From",to:"To",clearRange:"Clear range",urgent:"⚡ Urgent",recent:"Recent",backup:"⬇️ Backup",restore:"⬆️ Restore",search:"Search name, place or notes",heroTitle:"Check today's revisits 👋",heroText:"Keep people, conversations and next visits in one place.",todayPeople:"Today's visits",nearPeople:"Nearest to me",urgentPeople:"Urgent visits",recentPeople:"Recently visited",dataTitle:"💾 Data",dataText:"Backup and restore data on this device. Do not upload personal data to GitHub.",name:"Name",visitDate:"Visit date",place:"Place",mapLink:"Map link",lat:"Latitude",lon:"Longitude",saveCurrent:"Save current location for this person",interest:"Interest / background",nextDate:"Next visit",notes:"Notes",tags:"Tags (comma separated)",urgentFlag:"Mark as urgent",cancel:"Cancel",save:"Save",registered:"People",todayRevisit:"Today's revisits",nextTalk:"Next talk",noPeople:"No matching people.",locationFail:"Could not get your location. Check iPhone location permission.",noCoords:"No saved coordinates yet. Run this again to continue.",geocoding:"Looking up locations from addresses…",geocoded:" locations were found.",nearDone:"Sorted by distance.",gettingLocation:"Getting your location…",locationFound:"Your location was found",nearReady:"Nearby people can now be shown.",remaining:" addresses still need location data.",maps:"Map",edit:"Edit",copy:"Copy",delete:"Delete",distance:"Distance",noLoc:"No location",saved:"Location added. Please save.",restored:" people restored."},
-zh:{title:"再访名单",new:"＋ 新增联系人",all:"全部",today:"今天",near:"📍 按距离排序",sortNew:"↓ 最新在前",sortOld:"↑ 最旧在前",from:"开始日期",to:"结束日期",clearRange:"清除期间",urgent:"⚡ 紧急",recent:"最近",backup:"⬇️ 备份",restore:"⬆️ 恢复",search:"搜索姓名、地点或备注",heroTitle:"查看今天的再访 👋",heroText:"把见过的人、谈过的内容和下次访问集中记录。",todayPeople:"今天访问",nearPeople:"离当前位置最近",urgentPeople:"紧急访问",recentPeople:"最近访问",dataTitle:"💾 数据管理",dataText:"在本设备备份和恢复数据。不要把个人数据上传到GitHub。",name:"姓名",visitDate:"访问日期",place:"地点",mapLink:"地图链接",lat:"纬度",lon:"经度",saveCurrent:"将当前位置保存给此联系人",interest:"兴趣 / 背景",nextDate:"下次访问",notes:"备注",tags:"标签（逗号分隔）",urgentFlag:"标记为紧急",cancel:"取消",save:"保存",registered:"联系人",todayRevisit:"今天再访",nextTalk:"下次谈",noPeople:"没有符合条件的人。",locationFail:"无法获取当前位置，请检查iPhone定位权限。",noCoords:"还没有保存坐标。再次运行可继续尝试。",geocoding:"正在根据地址查找位置…",geocoded:" 个地址已找到位置。",nearDone:"已按距离排序。",gettingLocation:"正在获取当前位置…",locationFound:"已获取当前位置",nearReady:"现在可以显示附近联系人。",remaining:" 个地址还没有位置信息。",maps:"地图",edit:"编辑",copy:"复制",delete:"删除",distance:"距离",noLoc:"没有地点",saved:"当前位置已添加，请保存。",restored:" 个联系人已恢复。"}};
+ja:{title:"再訪問リスト",new:"＋ 新しい人",all:"すべて",today:"今日",near:"📍 現在地から近い順",sortNew:"↓ 新しい順",sortOld:"↑ 古い順",from:"開始日",to:"終了日",clearRange:"期間を解除",urgent:"⚡ 緊急",recent:"最近",voiceImport:"🎙️ 音声から追加",voiceTitle:"🎙️ 音声から新しい人を追加",voiceHelp:"名前、場所、話した内容、次回訪問などを自然に話してください。音声を文字にして項目を自動整理します。",voiceReady:"マイクボタンを押して話してください。",transcript:"認識した内容",voiceStart:"🎙️ 話す",voiceStop:"⏹️ 停止",voiceUnsupported:"このブラウザでは音声認識を利用できません。Android版Chromeなどでお試しください。",voiceListening:"聞いています…話し終わったら停止してください。",voiceDone:"音声を分析しました。内容を確認して保存してください。",voiceError:"音声を認識できませんでした。マイクの許可とインターネット接続を確認してください。",backup:"⬇️ バックアップ",restore:"⬆️ 復元",search:"名前・場所・メモを検索",heroTitle:"今日の再訪問をチェック 👋",heroText:"会った人・話したこと・次に訪問したい人を、ここにまとめておけます。",todayPeople:"今日訪問する人",nearPeople:"現在地から近い人",urgentPeople:"緊急訪問できる人",recentPeople:"最近会った人",dataTitle:"💾 データ管理",dataText:"この端末のデータをバックアップ・復元します。個人データはGitHubにアップロードしないでください。",name:"名前",visitDate:"出会った日",place:"場所",mapLink:"地図リンク",lat:"緯度",lon:"経度",saveCurrent:"現在地を取得して地図リンクも登録",interest:"宗教・関心など",nextDate:"次回訪問",notes:"メモ",tags:"タグ（カンマ区切り）",urgentFlag:"緊急訪問候補にする",cancel:"キャンセル",save:"保存",registered:"登録人数",todayRevisit:"今日の再訪問",nextTalk:"次回話す",noPeople:"該当する人はいません。",locationFail:"位置情報を取得できませんでした。iPhoneの位置情報許可を確認してください。",noCoords:"住所から位置情報を取得できた人がまだいません。もう一度実行すると続きから試します。",geocoding:"住所から位置情報を調べています…",geocoded:"件の住所の位置情報を取得しました。",nearDone:"近い順に表示しました。",gettingLocation:"現在地を取得しています…",locationFound:"現在地を取得しました",nearReady:"近い人を表示できます。",remaining:"件の住所はまだ位置情報を取得できません。",maps:"地図",edit:"編集",copy:"複製",delete:"削除",distance:"距離",noLoc:"場所未登録",saved:"現在地を登録しました。保存してください。",restored:"件を復元しました。"} ,
+en:{title:"Revisit List",new:"+ New Person",all:"All",today:"Today",near:"📍 Nearest First",sortNew:"↓ Newest first",sortOld:"↑ Oldest first",from:"From",to:"To",clearRange:"Clear range",urgent:"⚡ Urgent",recent:"Recent",voiceImport:"🎙️ Add by voice",voiceTitle:"🎙️ Add a new person by voice",voiceHelp:"Speak naturally about the name, place, conversation, and next visit. The app will transcribe and organize the information.",voiceReady:"Press the microphone button and speak.",transcript:"Recognized speech",voiceStart:"🎙️ Speak",voiceStop:"⏹️ Stop",voiceUnsupported:"Speech recognition is not supported in this browser. Try Chrome on Android.",voiceListening:"Listening… press stop when finished.",voiceDone:"The speech was analyzed. Check the fields and save.",voiceError:"Could not recognize the speech. Check microphone permission and internet connection.",backup:"⬇️ Backup",restore:"⬆️ Restore",search:"Search name, place or notes",heroTitle:"Check today's revisits 👋",heroText:"Keep people, conversations and next visits in one place.",todayPeople:"Today's visits",nearPeople:"Nearest to me",urgentPeople:"Urgent visits",recentPeople:"Recently visited",dataTitle:"💾 Data",dataText:"Backup and restore data on this device. Do not upload personal data to GitHub.",name:"Name",visitDate:"Date met",place:"Place",mapLink:"Map link",lat:"Latitude",lon:"Longitude",saveCurrent:"Save current location for this person",interest:"Interest / background",nextDate:"Next visit",notes:"Notes",tags:"Tags (comma separated)",urgentFlag:"Mark as urgent",cancel:"Cancel",save:"Save",registered:"People",todayRevisit:"Today's revisits",nextTalk:"Next talk",noPeople:"No matching people.",locationFail:"Could not get your location. Check iPhone location permission.",noCoords:"No saved coordinates yet. Run this again to continue.",geocoding:"Looking up locations from addresses…",geocoded:" locations were found.",nearDone:"Sorted by distance.",gettingLocation:"Getting your location…",locationFound:"Your location was found",nearReady:"Nearby people can now be shown.",remaining:" addresses still need location data.",maps:"Map",edit:"Edit",copy:"Copy",delete:"Delete",distance:"Distance",noLoc:"No location",saved:"Location added. Please save.",restored:" people restored."},
+zh:{title:"再访名单",new:"＋ 新增联系人",all:"全部",today:"今天",near:"📍 按距离排序",sortNew:"↓ 最新在前",sortOld:"↑ 最旧在前",from:"开始日期",to:"结束日期",clearRange:"清除期间",urgent:"⚡ 紧急",recent:"最近",voiceImport:"🎙️ 语音添加",voiceTitle:"🎙️ 用语音新增联系人",voiceHelp:"自然说出姓名、地点、谈话内容和下次访问等信息。应用会把语音转换成文字并自动整理。",voiceReady:"请按麦克风按钮开始说话。",transcript:"识别内容",voiceStart:"🎙️ 开始说话",voiceStop:"⏹️ 停止",voiceUnsupported:"此浏览器不支持语音识别。请尝试 Android Chrome。",voiceListening:"正在聆听……说完后请停止。",voiceDone:"已分析语音内容。请确认资料后保存。",voiceError:"无法识别语音。请检查麦克风权限和网络连接。",backup:"⬇️ 备份",restore:"⬆️ 恢复",search:"搜索姓名、地点或备注",heroTitle:"查看今天的再访 👋",heroText:"把见过的人、谈过的内容和下次访问集中记录。",todayPeople:"今天访问",nearPeople:"离当前位置最近",urgentPeople:"紧急访问",recentPeople:"最近访问",dataTitle:"💾 数据管理",dataText:"在本设备备份和恢复数据。不要把个人数据上传到GitHub。",name:"姓名",visitDate:"见面日期",place:"地点",mapLink:"地图链接",lat:"纬度",lon:"经度",saveCurrent:"将当前位置保存给此联系人",interest:"兴趣 / 背景",nextDate:"下次访问",notes:"备注",tags:"标签（逗号分隔）",urgentFlag:"标记为紧急",cancel:"取消",save:"保存",registered:"联系人",todayRevisit:"今天再访",nextTalk:"下次谈",noPeople:"没有符合条件的人。",locationFail:"无法获取当前位置，请检查iPhone定位权限。",noCoords:"还没有保存坐标。再次运行可继续尝试。",geocoding:"正在根据地址查找位置…",geocoded:" 个地址已找到位置。",nearDone:"已按距离排序。",gettingLocation:"正在获取当前位置…",locationFound:"已获取当前位置",nearReady:"现在可以显示附近联系人。",remaining:" 个地址还没有位置信息。",maps:"地图",edit:"编辑",copy:"复制",delete:"删除",distance:"距离",noLoc:"没有地点",saved:"当前位置已添加，请保存。",restored:" 个联系人已恢复。"}};
 function lang(){return localStorage.getItem("revisit-lang")||"ja"} function tr(k){return (I18N[lang()]||I18N.ja)[k]||k}
-function setLang(v){localStorage.setItem("revisit-lang",v);$("languageSelector").classList.remove("open");applyLang();render();if(window.nearMode)renderNearbyDistance()}
+function setLang(v){localStorage.setItem("revisit-lang",v);$("languageSelector").classList.remove("open");
+let recognition=null, voiceRunning=false, voiceFinal="";
+function speechLang(){return lang()==="en"?"en-US":lang()==="zh"?"zh-CN":"ja-JP"}
+function startVoiceImport(){
+  if(!("SpeechRecognition" in window || "webkitSpeechRecognition" in window)){
+    alert(tr("voiceUnsupported")); return;
+  }
+  voiceFinal=""; $("voiceTranscript").value=""; $("voiceStatus").textContent=tr("voiceReady");
+  $("voiceStartBtn").textContent=tr("voiceStart"); voiceRunning=false;
+  voiceDlg.showModal();
+}
+function toggleVoice(){ voiceRunning ? stopVoice() : beginVoice(); }
+function beginVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert(tr("voiceUnsupported"));return;}
+  try{
+    recognition=new SR();
+    recognition.lang=speechLang(); recognition.continuous=true; recognition.interimResults=true; recognition.maxAlternatives=1;
+    recognition.onstart=()=>{voiceRunning=true;$("voiceStatus").textContent=tr("voiceListening");$("voiceStartBtn").textContent=tr("voiceStop");};
+    recognition.onresult=e=>{
+      let interim="";
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        const t=e.results[i][0].transcript;
+        if(e.results[i].isFinal) voiceFinal+=(voiceFinal?" ":"")+t; else interim+=t;
+      }
+      $("voiceTranscript").value=(voiceFinal+(interim?" "+interim:" ")).trim();
+    };
+    recognition.onerror=e=>{if(e.error!=="aborted"){voiceRunning=false;$("voiceStartBtn").textContent=tr("voiceStart");$("voiceStatus").textContent=tr("voiceError");}};
+    recognition.onend=()=>{
+      if(voiceRunning){try{recognition.start();}catch(e){}}
+      else finishVoice();
+    };
+    recognition.start();
+  }catch(e){alert(tr("voiceError"));}
+}
+function stopVoice(){
+  if(!recognition){voiceRunning=false;return;}
+  voiceRunning=false;
+  try{recognition.stop();}catch(e){finishVoice();}
+}
+function finishVoice(){
+  $("voiceStartBtn").textContent=tr("voiceStart");
+  const text=$("voiceTranscript").value.trim();
+  if(!text)return;
+  const parsed=parseVoice(text);
+  voiceDlg.close();
+  openForm(parsed);
+  $("nearStatus").innerHTML=`<div class="status">🎙️ ${tr("voiceDone")}</div>`;
+}
+function dateFromText(text){
+  const now=new Date();
+  if(/今日/.test(text)||/today/i.test(text))return now.toISOString().slice(0,10);
+  if(/明日|明後日|明後日/.test(text)||/tomorrow|day after tomorrow/i.test(text)){
+    const d=new Date(now); d.setDate(d.getDate()+(/明後日|day after tomorrow/i.test(text)?2:1)); return d.toISOString().slice(0,10);
+  }
+  let m=text.match(/(20\d{2})[年\/-](\d{1,2})[月\/-](\d{1,2})日?/);
+  if(m)return `${m[1]}-${String(m[2]).padStart(2,"0")}-${String(m[3]).padStart(2,"0")}`;
+  m=text.match(/(\d{1,2})月(\d{1,2})日/);
+  if(m)return `${now.getFullYear()}-${String(m[1]).padStart(2,"0")}-${String(m[2]).padStart(2,"0")}`;
+  return "";
+}
+function parseVoice(text){
+  const t=text.replace(/\s+/g," ").trim();
+  let name="", place="", interest="", next="", notes=t, urgent=false;
+  const nameM=t.match(/(?:名前(?:は|が)|(?:name|his name|her name)\s*(?:is)?)[：:]?\s*([^、。,\.。;；]+)/i);
+  if(nameM)name=nameM[1].trim();
+  else { const first=t.match(/^([^、。,\.。;；]+?)(?:さん|様)(?:は|と|、|\s)/); if(first)name=first[1].trim(); }
+  const placeM=t.match(/(?:場所(?:は|が)|(?:place|location)\s*(?:is)?)[：:]?\s*([^、。,\.。;；]+)/i);
+  if(placeM)place=placeM[1].trim();
+  const intM=t.match(/(?:興味|関心|背景|interest|interested in|興味は)[：:]?\s*([^。\.]+)/i);
+  if(intM)interest=intM[1].trim();
+  const nextM=t.match(/(?:次回(?:訪問|は)?|次に会う|next visit|next time)[：:]?\s*([^。\.]+)/i);
+  if(nextM){const d=dateFromText(nextM[1]);next=d||"";}
+  if(/緊急|急ぎ|urgent/i.test(t))urgent=true;
+  if(!name){
+    const cleaned=t.split(/(?:場所|住所|location|place|興味|関心|次回|next visit|メモ|notes)/i)[0].trim();
+    name=cleaned.replace(/^(今日|本日|today)\s*/i,"").replace(/(さん|様)$/,"" ).trim();
+  }
+  const date=dateFromText(t);
+  return {id:"",name, date, place, map:makeMap(place),lat:null,lon:null,interest,next,notes,tags:[],urgent};
+}
+applyLang();render();if(window.nearMode)renderNearbyDistance()}
 function toggleLangMenu(){$("languageSelector").classList.toggle("open")}
 document.addEventListener("click",e=>{
  if(!$("languageSelector").contains(e.target))$("languageSelector").classList.remove("open");
@@ -261,32 +353,33 @@ function removePerson(id){if(confirm(tr("delete")+"?")){people=people.filter(x=>
 function duplicate(id){let p=structuredClone(people.find(x=>x.id===id));p.id=crypto.randomUUID();people.push(p);save();render()}
 function exportData(){let payload={version:1,app:"再訪問リスト",exportedAt:new Date().toISOString(),people};let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}));a.download="再訪問リスト_バックアップ_"+new Date().toISOString().slice(0,10)+".json";a.click()}
 function importData(e){
- let f=e.target.files&&e.target.files[0];
+ const input=e.target;
+ const f=input.files&&input.files[0];
  if(!f)return;
- let r=new FileReader();
+ const r=new FileReader();
  r.onload=()=>{
   try{
-   let x=JSON.parse(r.result),arr=Array.isArray(x)?x:x.people;
-   if(!Array.isArray(arr))throw new Error("invalid");
-   people=arr.map(normalize);
-   save();
-   render();
-   alert(people.length+tr("restored"));
+   const raw=String(r.result||"").replace(/^\uFEFF/,'').trim();
+   if(!raw)throw new Error("empty");
+   const x=JSON.parse(raw);
+   const arr=Array.isArray(x)?x:(x&&Array.isArray(x.people)?x.people:null);
+   if(!arr)throw new Error("invalid");
+   const imported=arr.map(normalize).filter(p=>p.name||p.place||p.notes||p.date);
+   if(!imported.length&&arr.length)throw new Error("no-valid-records");
+   people=imported;
+   save(); filter="all"; nearMode=false; render();
+   alert(`${imported.length}件を復元しました。\n（読み込み元：${arr.length}件）`);
   }catch(err){
-   alert("JSON error");
-  }finally{
-   e.target.value="";
-  }
+   console.error("Import failed:",err);
+   alert("JSONファイルを読み込めませんでした。\n正しい「再訪問リスト」バックアップファイルを選択してください。");
+  }finally{input.value="";}
  };
- r.onerror=()=>{
-  e.target.value="";
-  alert("JSON error");
- };
+ r.onerror=()=>{input.value="";alert("ファイルの読み込みに失敗しました。");};
  r.readAsText(f,"utf-8");
 }
 applyLang();render();
 </script>
 <script>
-if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js?v=29").catch(()=>{}));
+if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js?v=30").catch(()=>{}));
 </script>
 </body></html>
