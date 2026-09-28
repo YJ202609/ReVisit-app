@@ -195,96 +195,89 @@ function organizeVoiceIntoForm(){
   if(parsed.tags?.length) $("tags").value=parsed.tags.join(", ");
   if(parsed.urgent) $("urgent").checked=true;
   const status=document.getElementById("voiceOrganizeStatus");
-  if(status) status.textContent=tr("voiceDone");
+  if(status){
+    const filled=[parsed.name&&"名前",parsed.date&&"出会った日",parsed.place&&"場所",parsed.interest&&"関心",parsed.next&&"次回訪問",parsed.notes&&"メモ"].filter(Boolean);
+    status.textContent=(filled.length?"入力しました："+filled.join("・")+"。":"文章を項目に分けられなかったため、メモに全文を残しました。")+" 内容を確認してください。";
+  }
 }
 
+function localISO(d){const x=new Date(d);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`}
 function dateFromText(text, baseDate=new Date()){
-  const now=new Date(baseDate);
-  const clean=String(text||'').replace(/\s+/g,' ').trim().toLowerCase();
-  if(/今日|本日|today/.test(clean)) return now.toISOString().slice(0,10);
-  if(/明後日|day after tomorrow/.test(clean)){const d=new Date(now);d.setDate(d.getDate()+2);return d.toISOString().slice(0,10)}
-  if(/明日|tomorrow/.test(clean)){const d=new Date(now);d.setDate(d.getDate()+1);return d.toISOString().slice(0,10)}
-  if(/明々後日|しあさって/.test(clean)){const d=new Date(now);d.setDate(d.getDate()+3);return d.toISOString().slice(0,10)}
+  const now=new Date(baseDate), clean=String(text||'').replace(/\s+/g,' ').trim().toLowerCase();
+  if(/今日|本日|today/.test(clean)) return localISO(now);
+  if(/明後日|day after tomorrow/.test(clean)){const d=new Date(now);d.setDate(d.getDate()+2);return localISO(d)}
+  if(/明日|tomorrow/.test(clean)){const d=new Date(now);d.setDate(d.getDate()+1);return localISO(d)}
+  if(/明々後日|しあさって|three days from now/.test(clean)){const d=new Date(now);d.setDate(d.getDate()+3);return localISO(d)}
   let m=clean.match(/(20\d{2})[年\/-](\d{1,2})[月\/-](\d{1,2})日?/);
   if(m)return `${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}`;
   m=clean.match(/(\d{1,2})月(\d{1,2})日/);
-  if(m)return `${now.getFullYear()}-${String(m[1]).padStart(2,'0')}-${String(m[2]).padStart(2,'0')}`;
-  // 来週、来週の土曜日、next week などは「次回訪問」の日付として扱う
-  if(/来週|next week/.test(clean)){
-    const d=new Date(now); d.setDate(d.getDate()+7);
-    const weekday=clean.match(/(?:来週|next week).*?(月|火|水|木|金|土|日)曜?/);
-    if(weekday){const map={月:1,火:2,水:3,木:4,金:5,土:6,日:0};const target=map[weekday[1]];const diff=(target-d.getDay()+7)%7;d.setDate(d.getDate()+diff+(diff===0?7:0));}
-    return d.toISOString().slice(0,10);
-  }
-  if(/\d+\s*(日後|days? later)/.test(clean)){
-    const n=Number((clean.match(/\d+/)||['0'])[0]);const d=new Date(now);d.setDate(d.getDate()+n);return d.toISOString().slice(0,10);
+  if(m){let y=now.getFullYear();let d=new Date(y,Number(m[1])-1,Number(m[2]));if(d<new Date(now.getFullYear(),now.getMonth(),now.getDate()) && Number(m[1])<now.getMonth()+1)d.setFullYear(y+1);return localISO(d)}
+  m=clean.match(/(\d+)\s*(?:日後|days? later|日之后)/);
+  if(m){const d=new Date(now);d.setDate(d.getDate()+Number(m[1]));return localISO(d)}
+  if(/来週|下周|next week/.test(clean)){
+    const d=new Date(now); const wd=clean.match(/(?:来週|下周|next week).*?(月|火|水|木|金|土|日)(?:曜日|曜)?|(?:next week)\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/);
+    if(wd){const map={月:1,火:2,水:3,木:4,金:5,土:6,日:0,monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6,sunday:0};const target=map[wd[1]];const days=(target-d.getDay()+7)%7;d.setDate(d.getDate()+7+days);return localISO(d)}
+    d.setDate(d.getDate()+7);return localISO(d);
   }
   return '';
 }
-function sentenceParts(text){
-  return String(text||'').replace(/[。！？!?]+/g,'。').split(/[。\n]+/).map(s=>s.trim()).filter(Boolean);
-}
-function cleanPersonName(s){
-  return String(s||'').replace(/^(?:名前(?:は|が)?|name\s*(?:is)?|姓名[是为]?)\s*/i,'').replace(/[「」『』]/g,'').replace(/(?:さん|様|先生)$/,'').trim();
-}
+function sentenceParts(text){return String(text||'').replace(/[。！？!?]+/g,'。').split(/[。\n]+/).map(s=>s.trim()).filter(Boolean)}
+function cleanPersonName(s){return String(s||'').replace(/^(?:名前(?:は|が|を)?|name\s*(?:is)?|姓名[是为]?|叫|叫做)\s*/i,'').replace(/[「」『』]/g,'').replace(/(?:さん|様|先生|san)$/i,'').trim()}
 function extractName(t, parts){
-  let m=t.match(/(?:名前(?:は|が)?|name\s*(?:is)?|姓名[是为]?)\s*[：:]?\s*([^、。,\.。;；\n]+)/i);
-  if(m)return cleanPersonName(m[1]);
-  for(const p of parts){
-    m=p.match(/^\s*([^、。,\.。;；\n]+?)(?:さん|様|先生)(?:は|が|と|、|，|,|$)/);
-    if(m)return cleanPersonName(m[1]);
-    m=p.match(/^\s*([^、。,\.。;；\n]+?)(?:さん|様|先生)\s*$/);
-    if(m)return cleanPersonName(m[1]);
-  }
+  const patterns=[
+    /(?:名前|name|姓名)\s*(?:は|が|是|为|is)?\s*[：:]?\s*([\p{L}\p{N}][^、。,\.。;；\n]*?)(?:さん|様|先生|san)(?=\s|$|[、。,\.。])/iu,
+    /(?:^|[、,。\s])([\p{L}\p{N}][\p{L}\p{N}ー・'’ -]{0,30}?)(?:さん|様|先生|san)(?=は|が|と|に|を|で|、|，|,|\s|$)/iu
+  ];
+  for(const re of patterns){const m=t.match(re);if(m)return cleanPersonName(m[1])}
   return '';
 }
 function extractPlace(t, parts){
-  let m=t.match(/(?:場所|会った場所|地点|place|location)\s*(?:は|が|在|is)?\s*[：:]?\s*([^、。,\.。;；\n]+)/i);
-  if(m)return m[1].trim().replace(/(?:です|でした|那里|那里。)$/,'').trim();
+  let m=t.match(/(?:場所|会った場所|地点|place|location)\s*(?:は|が|在|is)?\s*[：:]?\s*([^、。,\.。;；\n]+?)(?:です|でした|。|,|，|$)/i);
+  if(m)return m[1].trim();
   for(const p of parts){
-    m=p.match(/(?:^|\s)([^、。,\.。;；\n]+?)\s*(?:で|にて)\s*(?:会い|会った|会いました|話し|話しました|出会い|出会いました|遇到|见面)/i);
+    m=p.match(/(?:^|[、,\s])([^、。,\.。;；\n]+?)\s*(?:で|にて)\s*(?:会|出会|話|お会い|見かけ|遇到|见面)/i);
     if(m && !/今日|明日|昨日|来週|next|today|tomorrow/i.test(m[1])) return m[1].trim();
-    m=p.match(/(?:at|in)\s+([^,.!?]+?)(?:\s+(?:and|where|we)|$)/i);
-    if(m)return m[1].trim();
+    m=p.match(/(?:at|in)\s+([^,.!?]+?)(?:\s+(?:and|where|we)|$)/i); if(m)return m[1].trim();
   }
   return '';
 }
 function extractInterest(t, parts){
   const hits=[];
   for(const p of parts){
-    if(/興味|関心|興味がある|興味を持|関心を持|好き|気に入|interested in|interest|likes?|对.*感兴趣|兴趣|喜欢/.test(p)) hits.push(p.trim());
+    if(/興味|関心|興味がある|興味を持|関心を持|好き|気に入|聖書|聖書について|interested in|interest|likes?|bible|对.*感兴趣|兴趣|喜欢/.test(p)) hits.push(p.trim());
   }
-  return hits.join('。');
+  return [...new Set(hits)].join('。');
 }
 function extractNext(t, parts){
   for(const p of parts){
-    if(/次回|次に|また|再訪|来週|明日|明後日|next visit|next time|visit again|下次|再去|下周|明天|后天/i.test(p)){
-      const d=dateFromText(p);
-      if(d)return d;
+    if(/次回|次に|また|再訪|訪問|会う|来週|明日|明後日|日後|next visit|next time|visit again|next week|下次|再去|下周|明天|后天|日之后/i.test(p)){
+      const d=dateFromText(p); if(d)return d;
     }
   }
   return '';
 }
+function stripKnown(sentence,name,place,interest,isNext){
+  let s=sentence.trim();
+  if(name)s=s.replace(new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?:さん|様|先生|san)?','iu'),'');
+  if(place)s=s.replace(new RegExp(place.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'iu'),'');
+  return s.replace(/(?:今日|本日|明日|明後日|しあさって|来週|next week|today|tomorrow|次回|次に|また|再訪|訪問します|訪問する|会いました|会った|で会って|で会いました|場所は|名前は|です|でした)/gi,' ').replace(/[、。,\.。]+/g,' ').replace(/\s+/g,' ').trim();
+}
 function parseVoice(text){
-  const t=String(text||'').replace(/\s+/g,' ').trim();
-  const parts=sentenceParts(t);
-  const name=extractName(t,parts);
-  const place=extractPlace(t,parts);
-  const interest=extractInterest(t,parts);
-  const next=extractNext(t,parts);
-  const date=dateFromText(t);
+  const t=String(text||'').replace(/\s+/g,' ').trim(), parts=sentenceParts(t);
+  const name=extractName(t,parts), place=extractPlace(t,parts), interest=extractInterest(t,parts), next=extractNext(t,parts), visitDate=dateFromText(t);
   const urgent=/緊急|急ぎ|早め|urgent|as soon as possible|紧急|尽快/i.test(t);
-  let remaining=parts.filter(p=>{
-    if(name && (p.includes(name)||new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?:さん|様|先生)').test(p))) return false;
-    if(place && (p.includes(place+'で')||p.includes(place+'にて')||p.includes('場所')||/^(?:at|in)\s/i.test(p))) return false;
-    if(interest && interest.includes(p)) return false;
-    if(/次回|次に|また|再訪|来週|明日|明後日|next visit|next time|visit again|下次|再去|下周/i.test(p) && dateFromText(p)) return false;
-    if(date && /今日|本日|today|明日|明後日|20\d{2}[年\/-]|\d{1,2}月\d{1,2}日/.test(p)) return false;
-    return true;
-  });
-  if(remaining.length===0 && !interest) remaining=[];
-  const notes=remaining.join('。');
-  return {id:'',name,date,place,map:makeMap(place),lat:null,lon:null,interest,next,notes,tags:[],urgent};
+  const classified=[];
+  for(const p of parts){
+    const isInterest=interest.split('。').includes(p) || /興味|関心|聖書|interested|interest|bible|兴趣|喜欢/i.test(p);
+    const isNext=/次回|次に|また|再訪|訪問|会う|来週|明日|明後日|日後|next visit|next time|visit again|next week|下次|再去|下周|明天|后天/i.test(p) && !!dateFromText(p);
+    const isVisitDate=!!visitDate && /今日|本日|明日|明後日|しあさって|today|tomorrow|20\d{2}[年\/-]|\d{1,2}月\d{1,2}日/.test(p);
+    const isPlace=!!place && (p.includes(place) || /場所|地点|place|location|(?:^|\s)(?:.+)\s(?:で|にて)\s*(?:会|話)/i.test(p));
+    const isName=!!name && p.includes(name);
+    if(!(isInterest||isNext||isVisitDate||isPlace||isName)) classified.push(stripKnown(p,name,place,interest,false));
+  }
+  let notes=classified.filter(Boolean).join('。');
+  if(!notes && parts.length && !name && !place && !interest && !next) notes=t;
+  return {id:'',name,date:visitDate,place,map:makeMap(place),lat:null,lon:null,interest,next,notes,tags:[],urgent};
 }
 
 applyLang();render();if(window.nearMode)renderNearbyDistance()}
