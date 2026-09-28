@@ -10,8 +10,8 @@
 <style>
 :root{--bg:#f3f6ff;--card:#fff;--text:#182238;--muted:#6b7280;--line:#e7eaf3;--blue:#4f46e5;--blue2:#6366f1;--mint:#10b981;--red:#dc2626}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#eef2ff,#f8fbff 45%,#f5f7fb);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-header{position:sticky;top:0;z-index:5;background:#fffffff2;backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:14px 16px 10px}
-h1{font-size:22px;margin:0 52px 10px 0;font-weight:800}.search{width:100%;padding:12px 14px;border:1px solid #dfe4f2;border-radius:14px;font-size:16px;background:#fff}
+header{position:sticky;top:0;z-index:5;background:#fffffff2;backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:10px 16px 8px}
+h1{font-size:22px;margin:0;font-weight:800;white-space:nowrap}.search{width:100%;padding:12px 14px;border:1px solid #dfe4f2;border-radius:14px;font-size:16px;background:#fff}
 .date-filter{position:relative;display:inline-flex;align-items:center}
 .date-filter-toggle{display:inline-flex;align-items:center;gap:5px}
 .date-filter-panel{display:none;position:absolute;top:46px;left:0;z-index:20;background:#fff;border:1px solid #dfe4f2;border-radius:14px;padding:12px;box-shadow:0 12px 30px #26315b22;min-width:290px}
@@ -28,7 +28,10 @@ h1{font-size:22px;margin:0 52px 10px 0;font-weight:800}.search{width:100%;paddin
 .lang-option{display:block;width:100%;padding:9px 12px;border-radius:9px;background:#fff;color:#3730a3;text-align:left;font-weight:800}
 .lang-option:hover{background:#eef2ff}
 .lang-option.active{background:#4f46e5;color:#fff}
-nav{display:flex;gap:7px;padding:10px 16px;overflow:auto;background:transparent;position:sticky;top:132px;z-index:4}
+.title-row{display:flex;align-items:center;gap:9px;padding-right:52px}
+.title-row .search{flex:1;min-width:0;width:auto;padding:7px 10px;border-radius:10px;font-size:14px}
+@media(max-width:520px){.title-row{gap:7px}.title-row h1{font-size:20px}.title-row .search{max-width:145px}}
+nav{display:flex;gap:7px;padding:0;overflow-x:auto;overflow-y:hidden;background:transparent;position:relative;z-index:1}
 button,.btn{border:0;border-radius:12px;padding:10px 12px;font-weight:700;background:#e9edff;color:#3730a3;cursor:pointer;white-space:nowrap}button.primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}
 .sort-active{background:#4f46e5!important;color:#fff!important}.date-filter{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 0}.date-filter input{padding:9px 10px;border:1px solid #dfe4f2;border-radius:10px;background:#fff;color:var(--text);font:inherit}.date-filter-label{font-size:12px;color:var(--muted);font-weight:700}
 main{max-width:760px;margin:auto;padding:8px 16px 100px}.hero{background:linear-gradient(135deg,#4f46e5,#7c3aed 55%,#ec4899);color:#fff;border-radius:22px;padding:20px;margin:4px 0 14px;box-shadow:0 12px 30px #6366f133}.hero h2{margin:0 0 5px;font-size:22px}.hero p{margin:0;opacity:.9;font-size:13px}
@@ -37,19 +40,58 @@ main{max-width:760px;margin:auto;padding:8px 16px 100px}.hero{background:linear-
 .card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:15px;margin:10px 0;box-shadow:0 5px 18px #26315b0b}.row{display:flex;justify-content:space-between;gap:10px}.name{font-size:18px;font-weight:800}.muted{color:var(--muted);font-size:13px}.tag{display:inline-block;background:#eef2ff;color:#4338ca;padding:5px 8px;border-radius:999px;font-size:12px;margin:6px 4px 0 0}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.danger{background:#fee2e2;color:var(--red)}.empty{text-align:center;color:var(--muted);padding:45px 10px}.status{padding:10px 12px;border-radius:12px;background:#f8fafc;margin:10px 0;font-size:13px}
 dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 20px 60px #0004}dialog::backdrop{background:#0006}.form{padding:20px}.form h2{margin-top:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin:9px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.field input,.field textarea,.field select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;font:inherit}.field textarea{min-height:90px}.wide{grid-column:1/-1}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
 @media(max-width:520px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}}
+
+/* Language selector: bottom data-management row only */
+.actions{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:12px !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+}
+.actions > .language-selector{
+  position:relative !important;
+  top:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  left:auto !important;
+  margin-left:auto !important;
+  margin-right:0 !important;
+  align-self:center !important;
+  flex:0 0 auto !important;
+  display:flex !important;
+  align-items:center !important;
+  height:42px !important;
+  z-index:100 !important;
+}
+.actions > .language-selector .lang-current{
+  width:42px !important;
+  height:42px !important;
+  min-width:42px !important;
+  min-height:42px !important;
+  margin:0 !important;
+  padding:0 !important;
+  box-sizing:border-box !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.actions > .language-selector .lang-menu{
+  position:absolute !important;
+  top:auto !important;
+  bottom:48px !important;
+  right:0 !important;
+  left:auto !important;
+}
+
 </style>
-</head>
+
 <body>
-<header><h1 data-i18n="title">再訪問リスト</h1><input id="search" class="search" data-placeholder="search" placeholder="名前・場所・メモを検索">
-<div class="language-selector" id="languageSelector">
-<button type="button" class="lang-current" id="langCurrent" aria-label="Language" onclick="toggleLangMenu()">J</button>
-<div class="lang-menu">
-<button type="button" class="lang-option" data-lang="ja" onclick="setLang('ja')">J　日本語</button>
-<button type="button" class="lang-option" data-lang="en" onclick="setLang('en')">E　English</button>
-<button type="button" class="lang-option" data-lang="zh" onclick="setLang('zh')">中　中文</button>
-</div>
-</div></header>
-<nav>
+<header>
+  <div class="header-content-block">
+    <div class="title-row"><h1 data-i18n="title">再訪問リスト</h1><input id="search" class="search" data-placeholder="search" placeholder="名前・場所・メモを検索"></div>
+    <nav>
 <button class="primary" onclick="openForm()" data-i18n="new">＋ 新しい人</button>
 <button onclick="setFilter('all')" data-i18n="all">すべて</button>
 <button onclick="setFilter('today')" data-i18n="today">今日</button>
@@ -66,8 +108,14 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
 </div></div>
 
 </nav>
+  </div>
+  
+
+</div>
+</header>
+
+
 <main>
-<div class="hero"><h2 data-i18n="heroTitle">今日の再訪問をチェック 👋</h2><p data-i18n="heroText">会った人・話したこと・次に訪問したい人を、ここにまとめておけます。</p></div>
 <div class="dash">
 <button class="dashCard" onclick="setFilter('today')"><span class="dashIcon">📅</span><span><b id="todayCount">0</b><small data-i18n="todayPeople">今日訪問する人</small></span></button>
 <button class="dashCard nearby" onclick="findNearby()"><span class="dashIcon">📍</span><span><b id="nearbyCount">0</b><small data-i18n="nearPeople">現在地から近い人</small></span></button>
@@ -77,11 +125,19 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
 <div id="nearStatus"></div>
 <div class="stats" id="stats"></div><section id="list"></section>
 <section class="card">
-<h2 data-i18n="dataTitle">💾 データ管理</h2>
 <div class="actions">
 <button type="button" onclick="exportData()" data-i18n="backup">⬇️ バックアップ</button>
 <label class="btn"><span data-i18n="restore">⬆️ 復元</span><input id="restoreFile" type="file" accept=".json,application/json" hidden onchange="importData(event)"></label>
+<div class="language-selector" id="languageSelector">
+<button type="button" class="lang-current" id="langCurrent" aria-label="Language" onclick="toggleLangMenu()">J</button>
+<div class="lang-menu">
+<button type="button" class="lang-option" data-lang="ja" onclick="setLang('ja')">J　日本語</button>
+<button type="button" class="lang-option" data-lang="en" onclick="setLang('en')">E　English</button>
+<button type="button" class="lang-option" data-lang="zh" onclick="setLang('zh')">中　中文</button>
 </div>
+
+</div>
+
 </section>
 </main>
 
@@ -231,6 +287,6 @@ function importData(e){
 applyLang();render();
 </script>
 <script>
-if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js?v=12").catch(()=>{}));
+if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js?v=29").catch(()=>{}));
 </script>
 </body></html>
