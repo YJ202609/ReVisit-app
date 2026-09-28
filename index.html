@@ -11,10 +11,26 @@
 :root{--bg:#f3f6ff;--card:#fff;--text:#182238;--muted:#6b7280;--line:#e7eaf3;--blue:#4f46e5;--blue2:#6366f1;--mint:#10b981;--red:#dc2626}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#eef2ff,#f8fbff 45%,#f5f7fb);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 header{position:sticky;top:0;z-index:5;background:#fffffff2;backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:14px 16px 10px}
-h1{font-size:22px;margin:0 0 10px;font-weight:800}.search{width:100%;padding:12px 14px;border:1px solid #dfe4f2;border-radius:14px;font-size:16px;background:#fff}
+h1{font-size:22px;margin:0 52px 10px 0;font-weight:800}.search{width:100%;padding:12px 14px;border:1px solid #dfe4f2;border-radius:14px;font-size:16px;background:#fff}
+.date-filter{position:relative;display:inline-flex;align-items:center}
+.date-filter-toggle{display:inline-flex;align-items:center;gap:5px}
+.date-filter-panel{display:none;position:absolute;top:46px;left:0;z-index:20;background:#fff;border:1px solid #dfe4f2;border-radius:14px;padding:12px;box-shadow:0 12px 30px #26315b22;min-width:290px}
+.date-filter.open .date-filter-panel{display:block}
+.date-filter-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.date-filter-panel input{padding:9px 10px;border:1px solid #dfe4f2;border-radius:10px;background:#fff;font:inherit;width:132px}
+.date-filter-panel label{font-size:12px;color:#6b7280;font-weight:700}
+.date-filter-actions{display:flex;gap:6px;margin-top:9px;justify-content:flex-end}
+@media(max-width:520px){.date-filter-panel{position:fixed;left:16px;right:16px;top:90px;min-width:0}.date-filter-panel input{width:125px}}
+.language-selector{position:absolute;right:16px;top:12px;z-index:10}
+.lang-current{width:42px;height:42px;padding:0;border-radius:12px;border:1px solid #dfe4f2;background:#fff;color:#3730a3;font-weight:900;font-size:17px;box-shadow:0 3px 10px #26315b12}
+.lang-menu{display:none;position:absolute;right:0;top:48px;background:#fff;border:1px solid #dfe4f2;border-radius:13px;padding:6px;box-shadow:0 12px 30px #26315b22;min-width:110px}
+.language-selector.open .lang-menu{display:block}
+.lang-option{display:block;width:100%;padding:9px 12px;border-radius:9px;background:#fff;color:#3730a3;text-align:left;font-weight:800}
+.lang-option:hover{background:#eef2ff}
+.lang-option.active{background:#4f46e5;color:#fff}
 nav{display:flex;gap:7px;padding:10px 16px;overflow:auto;background:transparent;position:sticky;top:132px;z-index:4}
 button,.btn{border:0;border-radius:12px;padding:10px 12px;font-weight:700;background:#e9edff;color:#3730a3;cursor:pointer;white-space:nowrap}button.primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}
-.sort-active{background:#4f46e5!important;color:#fff!important}.language-bar{display:flex;gap:6px;margin-top:10px}.lang-btn{flex:1;padding:9px 8px;border-radius:10px;border:1px solid #dfe4f2;background:#fff;color:#3730a3;font-weight:800}.lang-btn.active{background:#4f46e5;color:#fff;border-color:#4f46e5}.lang-btn:active{transform:scale(.98)}
+.sort-active{background:#4f46e5!important;color:#fff!important}.date-filter{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 0}.date-filter input{padding:9px 10px;border:1px solid #dfe4f2;border-radius:10px;background:#fff;color:var(--text);font:inherit}.date-filter-label{font-size:12px;color:var(--muted);font-weight:700}
 main{max-width:760px;margin:auto;padding:8px 16px 100px}.hero{background:linear-gradient(135deg,#4f46e5,#7c3aed 55%,#ec4899);color:#fff;border-radius:22px;padding:20px;margin:4px 0 14px;box-shadow:0 12px 30px #6366f133}.hero h2{margin:0 0 5px;font-size:22px}.hero p{margin:0;opacity:.9;font-size:13px}
 .dash{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}.dashCard{display:flex;gap:10px;align-items:center;text-align:left;background:#fff;border:1px solid var(--line);padding:13px;border-radius:15px;box-shadow:0 4px 15px #26315b0a}.dashIcon{font-size:25px}.dashCard b{font-size:21px;display:block}.dashCard small{font-size:11px;color:var(--muted)}.nearby{background:linear-gradient(145deg,#fff,#ecfdf5)}.urgent{background:linear-gradient(145deg,#fff,#fff1f2)}.recent{background:linear-gradient(145deg,#fff,#fff7ed)}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}.stat b{font-size:21px;display:block}.stat span{font-size:11px;color:var(--muted)}
@@ -25,7 +41,14 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
 </head>
 <body>
 <header><h1 data-i18n="title">再訪問リスト</h1><input id="search" class="search" data-placeholder="search" placeholder="名前・場所・メモを検索">
-<div class="language-bar" aria-label="Language"><button type="button" class="lang-btn" data-lang="ja" onclick="setLang('ja')">日本語</button><button type="button" class="lang-btn" data-lang="en" onclick="setLang('en')">English</button><button type="button" class="lang-btn" data-lang="zh" onclick="setLang('zh')">中文</button></div></header>
+<div class="language-selector" id="languageSelector">
+<button type="button" class="lang-current" id="langCurrent" aria-label="Language" onclick="toggleLangMenu()">J</button>
+<div class="lang-menu">
+<button type="button" class="lang-option" data-lang="ja" onclick="setLang('ja')">J　日本語</button>
+<button type="button" class="lang-option" data-lang="en" onclick="setLang('en')">E　English</button>
+<button type="button" class="lang-option" data-lang="zh" onclick="setLang('zh')">中　中文</button>
+</div>
+</div></header>
 <nav>
 <button class="primary" onclick="openForm()" data-i18n="new">＋ 新しい人</button>
 <button onclick="setFilter('all')" data-i18n="all">すべて</button>
@@ -35,8 +58,12 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
 <button onclick="setFilter('recent')" data-i18n="recent">最近</button>
 <button onclick="setSort('new')" id="sortNew" data-i18n="sortNew">↓ 新しい順</button>
 <button onclick="setSort('old')" id="sortOld" data-i18n="sortOld">↑ 古い順</button>
-<button onclick="exportData()" data-i18n="backup">バックアップ</button>
-<label class="btn" style="cursor:pointer" data-i18n="restore">復元<input id="file" type="file" accept=".json,application/json" hidden onchange="importData(event)"></label>
+<div class="date-filter" id="dateFilter">
+<button type="button" class="date-filter-toggle" onclick="toggleDateFilter()">📅 <span id="dateFilterLabel">期間</span></button>
+<div class="date-filter-panel">
+<div class="date-filter-row"><label>開始日</label><input id="fromDate" type="date"><span>〜</span><label>終了日</label><input id="toDate" type="date"></div>
+<div class="date-filter-actions"><button type="button" class="primary" onclick="applyDateRange()">適用</button><button type="button" onclick="clearDateRange()">解除</button></div>
+</div></div>
 
 </nav>
 <main>
@@ -73,14 +100,19 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
 <script>
 const KEY="revisit-list-v1";
 const I18N={
-ja:{title:"再訪問リスト",new:"＋ 新しい人",all:"すべて",today:"今日",near:"📍 現在地から近い順",sortNew:"↓ 新しい順",sortOld:"↑ 古い順",urgent:"⚡ 緊急",recent:"最近",backup:"⬇️ バックアップ",restore:"⬆️ 復元",search:"名前・場所・メモを検索",heroTitle:"今日の再訪問をチェック 👋",heroText:"会った人・話したこと・次に訪問したい人を、ここにまとめておけます。",todayPeople:"今日訪問する人",nearPeople:"現在地から近い人",urgentPeople:"緊急訪問できる人",recentPeople:"最近会った人",dataTitle:"💾 データ管理",dataText:"この端末のデータをバックアップ・復元します。個人データはGitHubにアップロードしないでください。",name:"名前",visitDate:"訪問日",place:"場所",mapLink:"地図リンク",lat:"緯度",lon:"経度",saveCurrent:"現在地を取得して地図リンクも登録",interest:"宗教・関心など",nextDate:"次回訪問",notes:"メモ",tags:"タグ（カンマ区切り）",urgentFlag:"緊急訪問候補にする",cancel:"キャンセル",save:"保存",registered:"登録人数",todayRevisit:"今日の再訪問",nextTalk:"次回話す",noPeople:"該当する人はいません。",locationFail:"位置情報を取得できませんでした。iPhoneの位置情報許可を確認してください。",noCoords:"住所から位置情報を取得できた人がまだいません。もう一度実行すると続きから試します。",geocoding:"住所から位置情報を調べています…",geocoded:"件の住所の位置情報を取得しました。",nearDone:"近い順に表示しました。",gettingLocation:"現在地を取得しています…",locationFound:"現在地を取得しました",nearReady:"近い人を表示できます。",remaining:"件の住所はまだ位置情報を取得できません。",maps:"地図",edit:"編集",copy:"複製",delete:"削除",distance:"距離",noLoc:"場所未登録",saved:"現在地を登録しました。保存してください。",restored:"件を復元しました。"} ,
-en:{title:"Revisit List",new:"+ New Person",all:"All",today:"Today",near:"📍 Nearest First",sortNew:"↓ Newest first",sortOld:"↑ Oldest first",urgent:"⚡ Urgent",recent:"Recent",backup:"⬇️ Backup",restore:"⬆️ Restore",search:"Search name, place or notes",heroTitle:"Check today's revisits 👋",heroText:"Keep people, conversations and next visits in one place.",todayPeople:"Today's visits",nearPeople:"Nearest to me",urgentPeople:"Urgent visits",recentPeople:"Recently visited",dataTitle:"💾 Data",dataText:"Backup and restore data on this device. Do not upload personal data to GitHub.",name:"Name",visitDate:"Visit date",place:"Place",mapLink:"Map link",lat:"Latitude",lon:"Longitude",saveCurrent:"Save current location for this person",interest:"Interest / background",nextDate:"Next visit",notes:"Notes",tags:"Tags (comma separated)",urgentFlag:"Mark as urgent",cancel:"Cancel",save:"Save",registered:"People",todayRevisit:"Today's revisits",nextTalk:"Next talk",noPeople:"No matching people.",locationFail:"Could not get your location. Check iPhone location permission.",noCoords:"No saved coordinates yet. Run this again to continue.",geocoding:"Looking up locations from addresses…",geocoded:" locations were found.",nearDone:"Sorted by distance.",gettingLocation:"Getting your location…",locationFound:"Your location was found",nearReady:"Nearby people can now be shown.",remaining:" addresses still need location data.",maps:"Map",edit:"Edit",copy:"Copy",delete:"Delete",distance:"Distance",noLoc:"No location",saved:"Location added. Please save.",restored:" people restored."},
-zh:{title:"再访名单",new:"＋ 新增联系人",all:"全部",today:"今天",near:"📍 按距离排序",sortNew:"↓ 最新在前",sortOld:"↑ 最旧在前",urgent:"⚡ 紧急",recent:"最近",backup:"⬇️ 备份",restore:"⬆️ 恢复",search:"搜索姓名、地点或备注",heroTitle:"查看今天的再访 👋",heroText:"把见过的人、谈过的内容和下次访问集中记录。",todayPeople:"今天访问",nearPeople:"离当前位置最近",urgentPeople:"紧急访问",recentPeople:"最近访问",dataTitle:"💾 数据管理",dataText:"在本设备备份和恢复数据。不要把个人数据上传到GitHub。",name:"姓名",visitDate:"访问日期",place:"地点",mapLink:"地图链接",lat:"纬度",lon:"经度",saveCurrent:"将当前位置保存给此联系人",interest:"兴趣 / 背景",nextDate:"下次访问",notes:"备注",tags:"标签（逗号分隔）",urgentFlag:"标记为紧急",cancel:"取消",save:"保存",registered:"联系人",todayRevisit:"今天再访",nextTalk:"下次谈",noPeople:"没有符合条件的人。",locationFail:"无法获取当前位置，请检查iPhone定位权限。",noCoords:"还没有保存坐标。再次运行可继续尝试。",geocoding:"正在根据地址查找位置…",geocoded:" 个地址已找到位置。",nearDone:"已按距离排序。",gettingLocation:"正在获取当前位置…",locationFound:"已获取当前位置",nearReady:"现在可以显示附近联系人。",remaining:" 个地址还没有位置信息。",maps:"地图",edit:"编辑",copy:"复制",delete:"删除",distance:"距离",noLoc:"没有地点",saved:"当前位置已添加，请保存。",restored:" 个联系人已恢复。"}};
+ja:{title:"再訪問リスト",new:"＋ 新しい人",all:"すべて",today:"今日",near:"📍 現在地から近い順",sortNew:"↓ 新しい順",sortOld:"↑ 古い順",from:"開始日",to:"終了日",clearRange:"期間を解除",urgent:"⚡ 緊急",recent:"最近",backup:"⬇️ バックアップ",restore:"⬆️ 復元",search:"名前・場所・メモを検索",heroTitle:"今日の再訪問をチェック 👋",heroText:"会った人・話したこと・次に訪問したい人を、ここにまとめておけます。",todayPeople:"今日訪問する人",nearPeople:"現在地から近い人",urgentPeople:"緊急訪問できる人",recentPeople:"最近会った人",dataTitle:"💾 データ管理",dataText:"この端末のデータをバックアップ・復元します。個人データはGitHubにアップロードしないでください。",name:"名前",visitDate:"訪問日",place:"場所",mapLink:"地図リンク",lat:"緯度",lon:"経度",saveCurrent:"現在地を取得して地図リンクも登録",interest:"宗教・関心など",nextDate:"次回訪問",notes:"メモ",tags:"タグ（カンマ区切り）",urgentFlag:"緊急訪問候補にする",cancel:"キャンセル",save:"保存",registered:"登録人数",todayRevisit:"今日の再訪問",nextTalk:"次回話す",noPeople:"該当する人はいません。",locationFail:"位置情報を取得できませんでした。iPhoneの位置情報許可を確認してください。",noCoords:"住所から位置情報を取得できた人がまだいません。もう一度実行すると続きから試します。",geocoding:"住所から位置情報を調べています…",geocoded:"件の住所の位置情報を取得しました。",nearDone:"近い順に表示しました。",gettingLocation:"現在地を取得しています…",locationFound:"現在地を取得しました",nearReady:"近い人を表示できます。",remaining:"件の住所はまだ位置情報を取得できません。",maps:"地図",edit:"編集",copy:"複製",delete:"削除",distance:"距離",noLoc:"場所未登録",saved:"現在地を登録しました。保存してください。",restored:"件を復元しました。"} ,
+en:{title:"Revisit List",new:"+ New Person",all:"All",today:"Today",near:"📍 Nearest First",sortNew:"↓ Newest first",sortOld:"↑ Oldest first",from:"From",to:"To",clearRange:"Clear range",urgent:"⚡ Urgent",recent:"Recent",backup:"⬇️ Backup",restore:"⬆️ Restore",search:"Search name, place or notes",heroTitle:"Check today's revisits 👋",heroText:"Keep people, conversations and next visits in one place.",todayPeople:"Today's visits",nearPeople:"Nearest to me",urgentPeople:"Urgent visits",recentPeople:"Recently visited",dataTitle:"💾 Data",dataText:"Backup and restore data on this device. Do not upload personal data to GitHub.",name:"Name",visitDate:"Visit date",place:"Place",mapLink:"Map link",lat:"Latitude",lon:"Longitude",saveCurrent:"Save current location for this person",interest:"Interest / background",nextDate:"Next visit",notes:"Notes",tags:"Tags (comma separated)",urgentFlag:"Mark as urgent",cancel:"Cancel",save:"Save",registered:"People",todayRevisit:"Today's revisits",nextTalk:"Next talk",noPeople:"No matching people.",locationFail:"Could not get your location. Check iPhone location permission.",noCoords:"No saved coordinates yet. Run this again to continue.",geocoding:"Looking up locations from addresses…",geocoded:" locations were found.",nearDone:"Sorted by distance.",gettingLocation:"Getting your location…",locationFound:"Your location was found",nearReady:"Nearby people can now be shown.",remaining:" addresses still need location data.",maps:"Map",edit:"Edit",copy:"Copy",delete:"Delete",distance:"Distance",noLoc:"No location",saved:"Location added. Please save.",restored:" people restored."},
+zh:{title:"再访名单",new:"＋ 新增联系人",all:"全部",today:"今天",near:"📍 按距离排序",sortNew:"↓ 最新在前",sortOld:"↑ 最旧在前",from:"开始日期",to:"结束日期",clearRange:"清除期间",urgent:"⚡ 紧急",recent:"最近",backup:"⬇️ 备份",restore:"⬆️ 恢复",search:"搜索姓名、地点或备注",heroTitle:"查看今天的再访 👋",heroText:"把见过的人、谈过的内容和下次访问集中记录。",todayPeople:"今天访问",nearPeople:"离当前位置最近",urgentPeople:"紧急访问",recentPeople:"最近访问",dataTitle:"💾 数据管理",dataText:"在本设备备份和恢复数据。不要把个人数据上传到GitHub。",name:"姓名",visitDate:"访问日期",place:"地点",mapLink:"地图链接",lat:"纬度",lon:"经度",saveCurrent:"将当前位置保存给此联系人",interest:"兴趣 / 背景",nextDate:"下次访问",notes:"备注",tags:"标签（逗号分隔）",urgentFlag:"标记为紧急",cancel:"取消",save:"保存",registered:"联系人",todayRevisit:"今天再访",nextTalk:"下次谈",noPeople:"没有符合条件的人。",locationFail:"无法获取当前位置，请检查iPhone定位权限。",noCoords:"还没有保存坐标。再次运行可继续尝试。",geocoding:"正在根据地址查找位置…",geocoded:" 个地址已找到位置。",nearDone:"已按距离排序。",gettingLocation:"正在获取当前位置…",locationFound:"已获取当前位置",nearReady:"现在可以显示附近联系人。",remaining:" 个地址还没有位置信息。",maps:"地图",edit:"编辑",copy:"复制",delete:"删除",distance:"距离",noLoc:"没有地点",saved:"当前位置已添加，请保存。",restored:" 个联系人已恢复。"}};
 function lang(){return localStorage.getItem("revisit-lang")||"ja"} function tr(k){return (I18N[lang()]||I18N.ja)[k]||k}
-function setLang(v){localStorage.setItem("revisit-lang",v);applyLang();render(); if(window.nearMode) renderNearbyDistance()}
-function applyLang(){document.documentElement.lang=lang();document.querySelectorAll("[data-i18n]").forEach(e=>e.textContent=tr(e.dataset.i18n));document.querySelectorAll("[data-placeholder]").forEach(e=>e.placeholder=tr(e.dataset.placeholder));document.querySelectorAll(".lang-btn").forEach(e=>e.classList.toggle("active",e.dataset.lang===lang()));$("sortNew")?.classList.toggle("sort-active",sortMode==="new");$("sortOld")?.classList.toggle("sort-active",sortMode==="old")}
+function setLang(v){localStorage.setItem("revisit-lang",v);$("languageSelector").classList.remove("open");applyLang();render();if(window.nearMode)renderNearbyDistance()}
+function toggleLangMenu(){$("languageSelector").classList.toggle("open")}
+document.addEventListener("click",e=>{
+ if(!$("languageSelector").contains(e.target))$("languageSelector").classList.remove("open");
+ if($("dateFilter")&&!$("dateFilter").contains(e.target))$("dateFilter").classList.remove("open");
+});
+function applyLang(){document.documentElement.lang=lang();document.querySelectorAll("[data-i18n]").forEach(e=>e.textContent=tr(e.dataset.i18n));document.querySelectorAll("[data-placeholder]").forEach(e=>e.placeholder=tr(e.dataset.placeholder));document.querySelectorAll(".lang-option").forEach(e=>e.classList.toggle("active",e.dataset.lang===lang()));$("langCurrent").textContent=lang()==="ja"?"J":lang()==="en"?"E":"中";$("sortNew")?.classList.toggle("sort-active",sortMode==="new");$("sortOld")?.classList.toggle("sort-active",sortMode==="old");if($("fromDate"))$("fromDate").value=fromDate;if($("toDate"))$("toDate").value=toDate;updateDateFilterLabel()}
 const $=id=>document.getElementById(id);
-let people=loadPeople(), filter="all", sortMode=localStorage.getItem("revisit-sort")||"new", userLat=null,userLon=null,nearMode=false;
+let people=loadPeople(), filter="all", sortMode=localStorage.getItem("revisit-sort")||"new", userLat=null,userLon=null,nearMode=false; let fromDate=localStorage.getItem("revisit-from-date")||"", toDate=localStorage.getItem("revisit-to-date")||"";
 function normalize(p,i){return{id:p.id||"import-"+Date.now()+"-"+i,name:p.name||"",date:p.date||p.visitDate||"",place:p.place||"",map:p.map||p.mapLink||makeMap(p.place||""),lat:p.lat!=null?Number(p.lat):(p.latitude!=null?Number(p.latitude):null),lon:p.lon!=null?Number(p.lon):(p.longitude!=null?Number(p.longitude):null),interest:p.interest||"",next:p.next||p.nextVisitDate||"",notes:p.notes||"",tags:Array.isArray(p.tags)?p.tags:[],urgent:!!p.urgent}}
 function makeMap(place){return place?"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(place):""}
 function loadPeople(){try{let x=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(x)?x.map(normalize):[]}catch{return[]}}
@@ -89,12 +121,27 @@ function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt
 function setFilter(f){filter=f;nearMode=false;render()}
 $("search").addEventListener("input",()=>nearMode?renderNearbyDistance():render());
 function setSort(v){sortMode=v;localStorage.setItem("revisit-sort",v);nearMode=false;render()}
-function render(){
-let q=$("search").value.trim().toLowerCase(),now=new Date().toISOString().slice(0,10),cutoff=new Date();cutoff.setDate(cutoff.getDate()-30);
-let arr=people.filter(p=>{if(filter==="today"&&p.next!==now)return false;if(filter==="recent"&&(!p.date||new Date(p.date)<cutoff))return false;if(filter==="urgent"&&!p.urgent)return false;return !q||[p.name,p.place,p.interest,p.notes,(p.tags||[]).join(" ")].join(" ").toLowerCase().includes(q)}).sort((a,b)=>sortMode==="old"?(a.date||"").localeCompare(b.date||""):(b.date||"").localeCompare(a.date||""));
-$("todayCount").textContent=people.filter(p=>p.next===now).length;$("nearbyCount").textContent=people.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)).length;$("urgentCount").textContent=people.filter(p=>p.urgent).length;$("recentCount").textContent=people.filter(p=>p.date&&new Date(p.date)>=cutoff).length;
-$("stats").innerHTML=`<div class="stat"><b>${people.length}</b><span>${tr("registered")}</span></div><div class="stat"><b>${people.filter(p=>p.next===now).length}</b><span>${tr("todayRevisit")}</span></div><div class="stat"><b>${people.filter(p=>p.tags?.includes("次回話す")).length}</b><span>${tr("nextTalk")}</span></div>`;
-$("list").innerHTML=arr.length?arr.map(card).join(""):`<div class="empty">${tr("noPeople")}</div>`;$("nearStatus").innerHTML="";
+function dateInRange(date){if(!date)return false;if(fromDate&&date<fromDate)return false;if(toDate&&date>toDate)return false;return true}
+function toggleDateFilter(){$("dateFilter").classList.toggle("open")}
+function updateDateFilterLabel(){
+ let label="期間";
+ if(fromDate||toDate){
+  const f=fromDate?fromDate.slice(5).replace("-","/"):"—";
+  const t=toDate?toDate.slice(5).replace("-","/"):"—";
+  label=`${f} ～ ${t}`;
+ }
+ $("dateFilterLabel").textContent=label;
+}
+function applyDateRange(){
+ fromDate=$("fromDate").value;toDate=$("toDate").value;
+ if(fromDate&&toDate&&fromDate>toDate){const t=fromDate;fromDate=toDate;toDate=t;}
+ localStorage.setItem("revisit-from-date",fromDate);localStorage.setItem("revisit-to-date",toDate);
+ $("dateFilter").classList.remove("open");updateDateFilterLabel();render();
+}
+function clearDateRange(){
+ fromDate="";toDate="";$("fromDate").value="";$("toDate").value="";
+ localStorage.removeItem("revisit-from-date");localStorage.removeItem("revisit-to-date");
+ $("dateFilter").classList.remove("open");updateDateFilterLabel();render();
 }
 function distanceKm(a,b,c,d){const R=6371,rad=Math.PI/180,dl=(c-a)*rad,do_=(d-b)*rad,x=Math.sin(dl/2)**2+Math.cos(a*rad)*Math.cos(c*rad)*Math.sin(do_/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
 async function findNearby(){
@@ -129,7 +176,7 @@ $("nearbyCount").textContent=people.filter(p=>Number.isFinite(p.lat)&&Number.isF
 }
 function renderNearbyDistance(){
 let q=$("search").value.trim().toLowerCase();
-let arr=people.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)).map(p=>({...p,_dist:distanceKm(userLat,userLon,p.lat,p.lon)})).filter(p=>!q||[p.name,p.place,p.notes,p.interest].join(" ").toLowerCase().includes(q)).sort((a,b)=>a._dist-b._dist);
+let arr=people.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)).map(p=>({...p,_dist:distanceKm(userLat,userLon,p.lat,p.lon)})).filter(p=>(!fromDate&&!toDate)||dateInRange(p.date)).filter(p=>!q||[p.name,p.place,p.notes,p.interest].join(" ").toLowerCase().includes(q)).sort((a,b)=>a._dist-b._dist);
 $("list").innerHTML=arr.length?arr.map(card).join(""):`<div class="empty">${tr("noCoords")}</div>`;
 }
 function card(p){
@@ -158,6 +205,6 @@ function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader
 applyLang();render();
 </script>
 <script>
-if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js?v=5").catch(()=>{}));
+if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js?v=10").catch(()=>{}));
 </script>
 </body></html>
