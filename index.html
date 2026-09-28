@@ -77,8 +77,11 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
 <div id="nearStatus"></div>
 <div class="stats" id="stats"></div><section id="list"></section>
 <section class="card">
-<h2 data-i18n="dataTitle">💾 データ管理</h2><p class="muted" data-i18n="dataText">この端末のデータをバックアップ・復元します。個人データはGitHubにアップロードしないでください。</p>
-<div class="actions"><button onclick="exportData()" data-i18n="backup">⬇️ バックアップ</button><label class="btn" data-i18n="restore">⬆️ 復元<input type="file" accept=".json,application/json" hidden onchange="importData(event)"></label></div>
+<h2 data-i18n="dataTitle">💾 データ管理</h2>
+<div class="actions">
+<button type="button" onclick="exportData()" data-i18n="backup">⬇️ バックアップ</button>
+<label class="btn" data-i18n="restore">⬆️ 復元<input id="restoreFile" type="file" accept=".json,application/json" hidden onchange="importData(event)"></label>
+</div>
 </section>
 </main>
 
@@ -201,10 +204,33 @@ alert(tr("saved"))
 function removePerson(id){if(confirm(tr("delete")+"?")){people=people.filter(x=>x.id!==id);save();render()}}
 function duplicate(id){let p=structuredClone(people.find(x=>x.id===id));p.id=crypto.randomUUID();people.push(p);save();render()}
 function exportData(){let payload={version:1,app:"再訪問リスト",exportedAt:new Date().toISOString(),people};let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}));a.download="再訪問リスト_バックアップ_"+new Date().toISOString().slice(0,10)+".json";a.click()}
-function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result),arr=Array.isArray(x)?x:x.people;if(!Array.isArray(arr))throw 0;people=arr.map(normalize);save();render();alert(people.length+tr("restored"))}catch{alert("JSON error")}};r.readAsText(f,"utf-8");e.target.value=""}
+function importData(e){
+ let f=e.target.files&&e.target.files[0];
+ if(!f)return;
+ let r=new FileReader();
+ r.onload=()=>{
+  try{
+   let x=JSON.parse(r.result),arr=Array.isArray(x)?x:x.people;
+   if(!Array.isArray(arr))throw new Error("invalid");
+   people=arr.map(normalize);
+   save();
+   render();
+   alert(people.length+tr("restored"));
+  }catch(err){
+   alert("JSON error");
+  }finally{
+   e.target.value="";
+  }
+ };
+ r.onerror=()=>{
+  e.target.value="";
+  alert("JSON error");
+ };
+ r.readAsText(f,"utf-8");
+}
 applyLang();render();
 </script>
 <script>
-if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js?v=10").catch(()=>{}));
+if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js?v=11").catch(()=>{}));
 </script>
 </body></html>
