@@ -3,321 +3,142 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>再訪問リスト</title>
-<style>
-:root{
- --bg:#f3f6ff;--card:#fff;--text:#182238;--muted:#6b7280;--line:#e7eaf3;
- --blue:#4f46e5;--blue2:#6366f1;--mint:#10b981;--orange:#f59e0b;
- --pink:#ec4899;--red:#dc2626;
-}
-*{box-sizing:border-box}
-body{margin:0;background:linear-gradient(180deg,#eef2ff 0,#f8fbff 42%,#f5f7fb 100%);
- color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-header{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);
- border-bottom:1px solid var(--line);padding:14px 16px 12px}
-h1{font-size:22px;margin:0 0 11px;font-weight:800}
-.search{width:100%;padding:12px 14px;border:1px solid #dfe4f2;border-radius:14px;font-size:16px;background:#fff}
-nav{display:flex;gap:8px;padding:11px 16px;overflow:auto;background:transparent;position:sticky;top:88px;z-index:4}
-button,.btn{border:0;border-radius:12px;padding:10px 13px;font-weight:700;background:#e9edff;color:#3730a3;cursor:pointer;white-space:nowrap}
-button.primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 5px 14px #4f46e533}
-main{max-width:760px;margin:auto;padding:8px 16px 100px}
-.hero{background:linear-gradient(135deg,#4f46e5,#7c3aed 55%,#ec4899);color:#fff;
- border-radius:22px;padding:20px;margin:4px 0 14px;box-shadow:0 12px 30px #6366f133}
-.hero h2{margin:0 0 5px;font-size:22px}.hero p{margin:0;opacity:.9;font-size:13px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:0 0 14px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:13px;
- box-shadow:0 4px 15px #26315b0a}.stat b{font-size:21px;display:block}.stat span{font-size:11px;color:var(--muted)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:15px;margin:10px 0;
- box-shadow:0 5px 18px #26315b0b}.row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.name{font-size:18px;font-weight:800}.muted{color:var(--muted);font-size:13px}
-.tag{display:inline-block;background:#eef2ff;color:#4338ca;padding:5px 8px;border-radius:999px;font-size:12px;margin:6px 4px 0 0}
-.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.actions button{font-size:13px}
-.danger{background:#fee2e2;color:var(--red)}.empty{text-align:center;color:var(--muted);padding:45px 10px}
-dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 20px 60px #0004}
-dialog::backdrop{background:#0006}.form{padding:20px}.form h2{margin-top:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.field{margin:9px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
-.field input,.field textarea,.field select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;font:inherit}
-.field textarea{min-height:90px}.field button{width:100%}.wide{grid-column:1/-1}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
-@media(max-width:520px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}}
-
-.dash{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 14px}
-.dashCard{display:flex;align-items:center;gap:9px;text-align:left;padding:13px;border-radius:17px;
- background:#fff;border:1px solid var(--line);box-shadow:0 5px 18px #26315b0b;color:var(--text)}
-.dashCard b{display:block;font-size:21px;line-height:1.1}.dashCard small{display:block;font-size:11px;color:var(--muted);margin-top:3px}
-.dashIcon{font-size:25px}.today{background:linear-gradient(145deg,#fff,#eef2ff)}.nearby{background:linear-gradient(145deg,#fff,#ecfdf5)}.recent{background:linear-gradient(145deg,#fff,#fff7ed)}.urgent{background:linear-gradient(145deg,#fff,#fff1f2)}
-@media(max-width:520px){.dash{grid-template-columns:1fr 1fr}.dashCard:last-child{grid-column:auto}}
-</style>
-
-<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#4f46e5">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="再訪問リスト">
+<title>再訪問リスト</title>
+<style>
+:root{--bg:#f3f6ff;--card:#fff;--text:#182238;--muted:#6b7280;--line:#e7eaf3;--blue:#4f46e5;--blue2:#6366f1;--mint:#10b981;--red:#dc2626}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#eef2ff,#f8fbff 45%,#f5f7fb);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{position:sticky;top:0;z-index:5;background:#fffffff2;backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:14px 16px 10px}
+h1{font-size:22px;margin:0 0 10px;font-weight:800}.search{width:100%;padding:12px 14px;border:1px solid #dfe4f2;border-radius:14px;font-size:16px;background:#fff}
+nav{display:flex;gap:7px;padding:10px 16px;overflow:auto;background:transparent;position:sticky;top:92px;z-index:4}
+button,.btn{border:0;border-radius:12px;padding:10px 12px;font-weight:700;background:#e9edff;color:#3730a3;cursor:pointer;white-space:nowrap}button.primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}
+.lang{padding:9px;border-radius:10px;border:1px solid #dfe4f2;background:#fff;font-weight:700}
+main{max-width:760px;margin:auto;padding:8px 16px 100px}.hero{background:linear-gradient(135deg,#4f46e5,#7c3aed 55%,#ec4899);color:#fff;border-radius:22px;padding:20px;margin:4px 0 14px;box-shadow:0 12px 30px #6366f133}.hero h2{margin:0 0 5px;font-size:22px}.hero p{margin:0;opacity:.9;font-size:13px}
+.dash{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}.dashCard{display:flex;gap:10px;align-items:center;text-align:left;background:#fff;border:1px solid var(--line);padding:13px;border-radius:15px;box-shadow:0 4px 15px #26315b0a}.dashIcon{font-size:25px}.dashCard b{font-size:21px;display:block}.dashCard small{font-size:11px;color:var(--muted)}.nearby{background:linear-gradient(145deg,#fff,#ecfdf5)}.urgent{background:linear-gradient(145deg,#fff,#fff1f2)}.recent{background:linear-gradient(145deg,#fff,#fff7ed)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}.stat b{font-size:21px;display:block}.stat span{font-size:11px;color:var(--muted)}
+.card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:15px;margin:10px 0;box-shadow:0 5px 18px #26315b0b}.row{display:flex;justify-content:space-between;gap:10px}.name{font-size:18px;font-weight:800}.muted{color:var(--muted);font-size:13px}.tag{display:inline-block;background:#eef2ff;color:#4338ca;padding:5px 8px;border-radius:999px;font-size:12px;margin:6px 4px 0 0}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.danger{background:#fee2e2;color:var(--red)}.empty{text-align:center;color:var(--muted);padding:45px 10px}.status{padding:10px 12px;border-radius:12px;background:#f8fafc;margin:10px 0;font-size:13px}
+dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 20px 60px #0004}dialog::backdrop{background:#0006}.form{padding:20px}.form h2{margin-top:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin:9px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.field input,.field textarea,.field select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;font:inherit}.field textarea{min-height:90px}.wide{grid-column:1/-1}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
+@media(max-width:520px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}}
+</style>
 </head>
 <body>
-<header><h1>再訪問リスト</h1><input id="search" class="search" placeholder="名前・場所・メモを検索"></header>
+<header><h1 data-i18n="title">再訪問リスト</h1><input id="search" class="search" data-placeholder="search" placeholder="名前・場所・メモを検索"></header>
 <nav>
-<button class="primary" onclick="openForm()">＋ 新しい人</button>
-<button onclick="setFilter('all')">すべて</button><button onclick="setFilter('today')">今日</button>
-<button onclick="findNearby()">📍 現在地から近い順</button><button onclick="setFilter('urgent')">⚡ 緊急</button>
-<button onclick="setFilter('recent')">最近</button><button onclick="exportData()">バックアップ</button>
-<button onclick="document.getElementById('file').click()">復元</button>
-<select id="lang" onchange="setLang(this.value)" style="padding:9px;border-radius:10px;border:1px solid #dfe4f2;background:#fff;font-weight:700">
-<option value="ja">日本語</option><option value="en">English</option><option value="zh">中文</option>
-</select>
-<input id="file" type="file" accept=".json" hidden onchange="importData(event)">
+<button class="primary" onclick="openForm()" data-i18n="new">＋ 新しい人</button>
+<button onclick="setFilter('all')" data-i18n="all">すべて</button>
+<button onclick="setFilter('today')" data-i18n="today">今日</button>
+<button onclick="findNearby()" data-i18n="near">📍 現在地から近い順</button>
+<button onclick="setFilter('urgent')" data-i18n="urgent">⚡ 緊急</button>
+<button onclick="setFilter('recent')" data-i18n="recent">最近</button>
+<button onclick="exportData()" data-i18n="backup">バックアップ</button>
+<label class="btn" style="cursor:pointer" data-i18n="restore">復元<input id="file" type="file" accept=".json,application/json" hidden onchange="importData(event)"></label>
+<select id="lang" class="lang" onchange="setLang(this.value)"><option value="ja">日本語</option><option value="en">English</option><option value="zh">中文</option></select>
 </nav>
 <main>
-<div class="hero">
-  <h2>今日の再訪問をチェック 👋</h2>
-  <p>会った人・話したこと・次に訪問したい人を、ここにまとめておけます。</p>
-</div>
-
+<div class="hero"><h2 data-i18n="heroTitle">今日の再訪問をチェック 👋</h2><p data-i18n="heroText">会った人・話したこと・次に訪問したい人を、ここにまとめておけます。</p></div>
 <div class="dash">
-  <button class="dashCard today" onclick="setFilter('today')">
-    <span class="dashIcon">📅</span>
-    <span><b id="todayCount">0</b><small>今日訪問する人</small></span>
-  </button>
-  <button class="dashCard nearby" onclick="findNearby()">
-    <span class="dashIcon">📍</span>
-    <span><b id="nearbyCount">0</b><small>今の場所から近い人</small></span>
-  </button>
-  <button class="dashCard urgent" onclick="setFilter('urgent')">
-    <span class="dashIcon">⚡</span>
-    <span><b id="urgentCount">0</b><small>緊急訪問できる人</small></span>
-  </button>
-  <button class="dashCard recent" onclick="setFilter('recent')">
-    <span class="dashIcon">🕘</span>
-    <span><b id="recentCount">0</b><small>最近会った人</small></span>
-  </button>
+<button class="dashCard" onclick="setFilter('today')"><span class="dashIcon">📅</span><span><b id="todayCount">0</b><small data-i18n="todayPeople">今日訪問する人</small></span></button>
+<button class="dashCard nearby" onclick="findNearby()"><span class="dashIcon">📍</span><span><b id="nearbyCount">0</b><small data-i18n="nearPeople">現在地から近い人</small></span></button>
+<button class="dashCard urgent" onclick="setFilter('urgent')"><span class="dashIcon">⚡</span><span><b id="urgentCount">0</b><small data-i18n="urgentPeople">緊急訪問できる人</small></span></button>
+<button class="dashCard recent" onclick="setFilter('recent')"><span class="dashIcon">🕘</span><span><b id="recentCount">0</b><small data-i18n="recentPeople">最近会った人</small></span></button>
 </div>
+<div id="nearStatus"></div>
+<div class="stats" id="stats"></div><section id="list"></section>
+<section class="card">
+<h2 data-i18n="dataTitle">💾 データ管理</h2><p class="muted" data-i18n="dataText">この端末のデータをバックアップ・復元します。個人データはGitHubにアップロードしないでください。</p>
+<div class="actions"><button onclick="exportData()" data-i18n="backup">⬇️ バックアップ</button><label class="btn" data-i18n="restore">⬆️ 復元<input type="file" accept=".json,application/json" hidden onchange="importData(event)"></label></div>
+</section>
+</main>
 
-<div class="stats" id="stats"></div><section id="list"></section></main>
-
-<dialog id="dlg"><form method="dialog" class="form" onsubmit="savePerson(event)">
-<h2 id="dlgTitle">新しい人</h2><input type="hidden" id="id">
-<div class="grid">
-<div class="field"><label>名前</label><input id="name" required></div>
-<div class="field"><label>訪問日</label><input id="date" type="date"></div>
-<div class="field"><label>場所</label><input id="place" placeholder="例：Miri / Lutong"></div>
-<div class="field"><label>地図リンク</label><input id="map" placeholder="Google Maps等"></div>
-<div class="field"><label>緯度</label><input id="lat" type="number" step="any" placeholder="例：4.3995"></div>
-<div class="field"><label>経度</label><input id="lon" type="number" step="any" placeholder="例：113.9914"></div>
-<div class="field wide"><button type="button" onclick="useCurrentLocation()">📍 現在地をこの人の場所として登録</button></div>
-<div class="field"><label>宗教・関心など</label><input id="interest" placeholder="例：Christian / Buddhist"></div>
-<div class="field"><label>次回訪問</label><input id="next" type="date"></div>
-<div class="field wide"><label>メモ</label><textarea id="notes" placeholder="前回話した内容、次に話したいことなど"></textarea></div>
-<div class="field wide"><label>タグ（カンマ区切り）</label><input id="tags" placeholder="次回話す, 再訪問, 中国語"></div>
-<div class="field wide"><label><input id="urgent" type="checkbox" style="width:auto"> 緊急訪問候補にする</label></div>
-</div>
-<div class="modal-actions"><button type="button" onclick="dlg.close()">キャンセル</button><button class="primary">保存</button></div>
+<dialog id="dlg"><form class="form" onsubmit="savePerson(event)">
+<h2 id="dlgTitle">新しい人</h2><input type="hidden" id="id"><div class="grid">
+<div class="field"><label data-i18n="name">名前</label><input id="name" required></div><div class="field"><label data-i18n="visitDate">訪問日</label><input id="date" type="date"></div>
+<div class="field"><label data-i18n="place">場所</label><input id="place"></div><div class="field"><label data-i18n="mapLink">地図リンク</label><input id="map" placeholder="Google Maps"></div>
+<div class="field"><label data-i18n="lat">緯度</label><input id="lat" type="number" step="any"></div><div class="field"><label data-i18n="lon">経度</label><input id="lon" type="number" step="any"></div>
+<div class="field wide"><button type="button" onclick="useCurrentLocation()">📍 <span data-i18n="saveCurrent">現在地をこの人の場所として登録</span></button></div>
+<div class="field"><label data-i18n="interest">宗教・関心など</label><input id="interest"></div><div class="field"><label data-i18n="nextDate">次回訪問</label><input id="next" type="date"></div>
+<div class="field wide"><label data-i18n="notes">メモ</label><textarea id="notes"></textarea></div><div class="field wide"><label data-i18n="tags">タグ（カンマ区切り）</label><input id="tags"></div>
+<div class="field wide"><label><input id="urgent" type="checkbox" style="width:auto"> <span data-i18n="urgentFlag">緊急訪問候補にする</span></label></div>
+</div><div class="modal-actions"><button type="button" onclick="dlg.close()" data-i18n="cancel">キャンセル</button><button class="primary" data-i18n="save">保存</button></div>
 </form></dialog>
 
 <script>
-
+const KEY="revisit-list-v1";
 const I18N={
-ja:{title:"再訪問リスト",new:"＋ 新しい人",all:"すべて",today:"今日",near:"📍 現在地から近い順",urgent:"⚡ 緊急",recent:"最近",backup:"バックアップ",restore:"復元"},
-en:{title:"Revisit List",new:"+ New Person",all:"All",today:"Today",near:"📍 Nearest First",urgent:"⚡ Urgent",recent:"Recent",backup:"Backup",restore:"Restore"},
-zh:{title:"再访名单",new:"＋ 新增联系人",all:"全部",today:"今天",near:"📍 按距离排序",urgent:"⚡ 紧急",recent:"最近",backup:"备份",restore:"恢复"}};
-function currentLang(){return localStorage.getItem("revisit-lang")||"ja"}
-function setLang(l){localStorage.setItem("revisit-lang",l);applyLang()}
-function t(ja,en,zh){return currentLang()==="en"?en:currentLang()==="zh"?zh:ja}
-function applyLang(){
- const x=I18N[currentLang()];document.querySelector("h1").textContent=x.title;
- const bs=document.querySelectorAll("nav button");
- if(bs.length>=7){bs[0].textContent=x.new;bs[1].textContent=x.all;bs[2].textContent=x.today;bs[3].textContent=x.near;bs[4].textContent=x.urgent;bs[5].textContent=x.recent;bs[6].textContent=x.backup;bs[7].textContent=x.restore}
- document.documentElement.lang=currentLang();
-}
-
-const KEY="revisit-list-v1"; let people=JSON.parse(localStorage.getItem(KEY)||"[]"), filter="all";
+ja:{title:"再訪問リスト",new:"＋ 新しい人",all:"すべて",today:"今日",near:"📍 現在地から近い順",urgent:"⚡ 緊急",recent:"最近",backup:"⬇️ バックアップ",restore:"⬆️ 復元",search:"名前・場所・メモを検索",heroTitle:"今日の再訪問をチェック 👋",heroText:"会った人・話したこと・次に訪問したい人を、ここにまとめておけます。",todayPeople:"今日訪問する人",nearPeople:"現在地から近い人",urgentPeople:"緊急訪問できる人",recentPeople:"最近会った人",dataTitle:"💾 データ管理",dataText:"この端末のデータをバックアップ・復元します。個人データはGitHubにアップロードしないでください。",name:"名前",visitDate:"訪問日",place:"場所",mapLink:"地図リンク",lat:"緯度",lon:"経度",saveCurrent:"現在地をこの人の場所として登録",interest:"宗教・関心など",nextDate:"次回訪問",notes:"メモ",tags:"タグ（カンマ区切り）",urgentFlag:"緊急訪問候補にする",cancel:"キャンセル",save:"保存",registered:"登録人数",todayRevisit:"今日の再訪問",nextTalk:"次回話す",noPeople:"該当する人はいません。",locationFail:"位置情報を取得できませんでした。iPhoneの位置情報許可を確認してください。",noCoords:"住所から位置情報を取得できた人がまだいません。もう一度実行すると続きから試します。",geocoding:"住所から位置情報を調べています…",geocoded:"件の住所の位置情報を取得しました。",nearDone:"近い順に表示しました。",maps:"地図",edit:"編集",copy:"複製",delete:"削除",distance:"距離",noLoc:"場所未登録",saved:"現在地を登録しました。保存してください。",restored:"件を復元しました。"} ,
+en:{title:"Revisit List",new:"+ New Person",all:"All",today:"Today",near:"📍 Nearest First",urgent:"⚡ Urgent",recent:"Recent",backup:"⬇️ Backup",restore:"⬆️ Restore",search:"Search name, place or notes",heroTitle:"Check today's revisits 👋",heroText:"Keep people, conversations and next visits in one place.",todayPeople:"Today's visits",nearPeople:"Nearest to me",urgentPeople:"Urgent visits",recentPeople:"Recently visited",dataTitle:"💾 Data",dataText:"Backup and restore data on this device. Do not upload personal data to GitHub.",name:"Name",visitDate:"Visit date",place:"Place",mapLink:"Map link",lat:"Latitude",lon:"Longitude",saveCurrent:"Save current location for this person",interest:"Interest / background",nextDate:"Next visit",notes:"Notes",tags:"Tags (comma separated)",urgentFlag:"Mark as urgent",cancel:"Cancel",save:"Save",registered:"People",todayRevisit:"Today's revisits",nextTalk:"Next talk",noPeople:"No matching people.",locationFail:"Could not get your location. Check iPhone location permission.",noCoords:"No saved coordinates yet. Run this again to continue.",geocoding:"Looking up locations from addresses…",geocoded:" locations were found.",nearDone:"Sorted by distance.",maps:"Map",edit:"Edit",copy:"Copy",delete:"Delete",distance:"Distance",noLoc:"No location",saved:"Location added. Please save.",restored:" people restored."},
+zh:{title:"再访名单",new:"＋ 新增联系人",all:"全部",today:"今天",near:"📍 按距离排序",urgent:"⚡ 紧急",recent:"最近",backup:"⬇️ 备份",restore:"⬆️ 恢复",search:"搜索姓名、地点或备注",heroTitle:"查看今天的再访 👋",heroText:"把见过的人、谈过的内容和下次访问集中记录。",todayPeople:"今天访问",nearPeople:"离当前位置最近",urgentPeople:"紧急访问",recentPeople:"最近访问",dataTitle:"💾 数据管理",dataText:"在本设备备份和恢复数据。不要把个人数据上传到GitHub。",name:"姓名",visitDate:"访问日期",place:"地点",mapLink:"地图链接",lat:"纬度",lon:"经度",saveCurrent:"将当前位置保存给此联系人",interest:"兴趣 / 背景",nextDate:"下次访问",notes:"备注",tags:"标签（逗号分隔）",urgentFlag:"标记为紧急",cancel:"取消",save:"保存",registered:"联系人",todayRevisit:"今天再访",nextTalk:"下次谈",noPeople:"没有符合条件的人。",locationFail:"无法获取当前位置，请检查iPhone定位权限。",noCoords:"还没有保存坐标。再次运行可继续尝试。",geocoding:"正在根据地址查找位置…",geocoded:" 个地址已找到位置。",nearDone:"已按距离排序。",maps:"地图",edit:"编辑",copy:"复制",delete:"删除",distance:"距离",noLoc:"没有地点",saved:"当前位置已添加，请保存。",restored:" 个联系人已恢复。"}};
+function lang(){return localStorage.getItem("revisit-lang")||"ja"} function tr(k){return (I18N[lang()]||I18N.ja)[k]||k}
+function setLang(v){localStorage.setItem("revisit-lang",v);applyLang();render(); if(window.nearMode) renderNearbyDistance()}
+function applyLang(){document.documentElement.lang=lang();document.querySelectorAll("[data-i18n]").forEach(e=>e.textContent=tr(e.dataset.i18n));document.querySelectorAll("[data-placeholder]").forEach(e=>e.placeholder=tr(e.dataset.placeholder));document.getElementById("lang").value=lang()}
 const $=id=>document.getElementById(id);
+let people=loadPeople(), filter="all", userLat=null,userLon=null,nearMode=false;
+function normalize(p,i){return{id:p.id||"import-"+Date.now()+"-"+i,name:p.name||"",date:p.date||p.visitDate||"",place:p.place||"",map:p.map||p.mapLink||makeMap(p.place||""),lat:p.lat!=null?Number(p.lat):(p.latitude!=null?Number(p.latitude):null),lon:p.lon!=null?Number(p.lon):(p.longitude!=null?Number(p.longitude):null),interest:p.interest||"",next:p.next||p.nextVisitDate||"",notes:p.notes||"",tags:Array.isArray(p.tags)?p.tags:[],urgent:!!p.urgent}}
+function makeMap(place){return place?"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(place):""}
+function loadPeople(){try{let x=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(x)?x.map(normalize):[]}catch{return[]}}
 function save(){localStorage.setItem(KEY,JSON.stringify(people))}
-function esc(s=""){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function setFilter(f){filter=f; if(f==='nearby'){findNearby();return} render()}
-$("search").addEventListener("input",render);
+function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function setFilter(f){filter=f;nearMode=false;render()}
+$("search").addEventListener("input",()=>nearMode?renderNearbyDistance():render());
 function render(){
- let q=$("search").value.trim().toLowerCase(), now=new Date().toISOString().slice(0,10);
- let cutoff=new Date(); cutoff.setDate(cutoff.getDate()-30);
- let arr=people.filter(p=>{
-   if(filter==="today" && p.next!==now)return false;
-   if(filter==="recent" && (!p.date || new Date(p.date)<cutoff))return false;
-   if(filter==="nearby" && !p.place)return false;
-   if(filter==="urgent" && !p.urgent)return false;
-   return !q || [p.name,p.place,p.interest,p.notes,(p.tags||[]).join(" ")].join(" ").toLowerCase().includes(q)
- }).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
- $("todayCount").textContent=people.filter(p=>p.next===now).length;
- $("nearbyCount").textContent=people.filter(p=>p.place).length;
- $("urgentCount").textContent=people.filter(p=>p.urgent).length;
- $("recentCount").textContent=people.filter(p=>p.date && new Date(p.date)>=cutoff).length;
- $("stats").innerHTML=`<div class="stat"><b>${people.length}</b><span>登録人数</span></div><div class="stat"><b>${people.filter(p=>p.next===now).length}</b><span>今日の再訪問</span></div><div class="stat"><b>${people.filter(p=>p.tags?.includes("次回話す")).length}</b><span>次回話す</span></div>`;
- $("list").innerHTML=arr.length?arr.map(card).join(""):`<div class="empty">該当する人はいません。</div>`;
+let q=$("search").value.trim().toLowerCase(),now=new Date().toISOString().slice(0,10),cutoff=new Date();cutoff.setDate(cutoff.getDate()-30);
+let arr=people.filter(p=>{if(filter==="today"&&p.next!==now)return false;if(filter==="recent"&&(!p.date||new Date(p.date)<cutoff))return false;if(filter==="urgent"&&!p.urgent)return false;return !q||[p.name,p.place,p.interest,p.notes,(p.tags||[]).join(" ")].join(" ").toLowerCase().includes(q)}).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+$("todayCount").textContent=people.filter(p=>p.next===now).length;$("nearbyCount").textContent=people.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)).length;$("urgentCount").textContent=people.filter(p=>p.urgent).length;$("recentCount").textContent=people.filter(p=>p.date&&new Date(p.date)>=cutoff).length;
+$("stats").innerHTML=`<div class="stat"><b>${people.length}</b><span>${tr("registered")}</span></div><div class="stat"><b>${people.filter(p=>p.next===now).length}</b><span>${tr("todayRevisit")}</span></div><div class="stat"><b>${people.filter(p=>p.tags?.includes("次回話す")).length}</b><span>${tr("nextTalk")}</span></div>`;
+$("list").innerHTML=arr.length?arr.map(card).join(""):`<div class="empty">${tr("noPeople")}</div>`;$("nearStatus").innerHTML="";
 }
-
-let userLat=null,userLon=null;
-function findNearby(){
-  if(!navigator.geolocation){alert(t("位置情報を利用できません。","Location is not available.","无法使用定位。"));return}
-  navigator.geolocation.getCurrentPosition(pos=>{
-    userLat=pos.coords.latitude; userLon=pos.coords.longitude;
-    filter="nearby"; renderNearbyDistance();
-  },()=>alert(t("位置情報を取得できませんでした。iPhoneの設定で位置情報を許可してください。",
-    "Could not get your location. Please allow location access in iPhone settings.",
-    "无法获取当前位置。请在 iPhone 设置中允许定位。")),
-  {enableHighAccuracy:true,timeout:10000,maximumAge:60000});
+function distanceKm(a,b,c,d){const R=6371,rad=Math.PI/180,dl=(c-a)*rad,do_=(d-b)*rad,x=Math.sin(dl/2)**2+Math.cos(a*rad)*Math.cos(c*rad)*Math.sin(do_/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
+async function findNearby(){
+nearMode=true;
+if(!navigator.geolocation){$("nearStatus").innerHTML=`<div class="status">${tr("locationFail")}</div>`;return}
+$("nearStatus").innerHTML=`<div class="status">${tr("geocoding")}</div>`;
+navigator.geolocation.getCurrentPosition(async pos=>{
+userLat=pos.coords.latitude;userLon=pos.coords.longitude;
+await geocodeMissing();renderNearbyDistance();
+},()=>{$("nearStatus").innerHTML=`<div class="status">${tr("locationFail")}</div>`},{enableHighAccuracy:true,timeout:15000,maximumAge:60000});
 }
-function distanceKm(lat1,lon1,lat2,lon2){
- const R=6371,rad=Math.PI/180,dLat=(lat2-lat1)*rad,dLon=(lon2-lon1)*rad;
- const a=Math.sin(dLat/2)**2+Math.cos(lat1*rad)*Math.cos(lat2*rad)*Math.sin(dLon/2)**2;
- return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+async function geocodeMissing(){
+let missing=people.filter(p=>p.place&&(!Number.isFinite(p.lat)||!Number.isFinite(p.lon)));
+let found=0;
+for(let i=0;i<missing.length;i++){
+let p=missing[i],q=p.place;
+if(!/[Mm]iri|Lutong|Sarawak|Malaysia/i.test(q))q+=", Miri, Sarawak, Malaysia";
+try{
+let url="https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q="+encodeURIComponent(q);
+let r=await fetch(url,{headers:{Accept:"application/json"}});
+let j=await r.json();
+if(j[0]){p.lat=Number(j[0].lat);p.lon=Number(j[0].lon);found++;}
+}catch(e){}
+$("nearStatus").innerHTML=`<div class="status">${tr("geocoding")} ${i+1}/${missing.length}</div>`;
+await new Promise(r=>setTimeout(r,1100));
+}
+if(found)save();
+$("nearStatus").innerHTML=`<div class="status">${found}${tr("geocoded")}</div>`;
 }
 function renderNearbyDistance(){
- let q=$("search").value.trim().toLowerCase();
- let arr=people.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon))
-  .map(p=>({...p,_dist:distanceKm(userLat,userLon,p.lat,p.lon)}))
-  .filter(p=>!q || [p.name,p.place,p.notes,p.interest].join(" ").toLowerCase().includes(q))
-  .sort((a,b)=>a._dist-b._dist);
- $("list").innerHTML=arr.length?arr.map(p=>card(p)).join(""):`<div class="empty">${t(
- "位置情報付きの人がまだいません。「現在地をこの人の場所として登録」で場所を保存できます。",
- "No people with saved locations yet. Use “Save current location” when editing a person.",
- "还没有保存位置的联系人。编辑联系人时，可以使用“保存当前位置”。")}</div>`;
+let q=$("search").value.trim().toLowerCase();
+let arr=people.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)).map(p=>({...p,_dist:distanceKm(userLat,userLon,p.lat,p.lon)})).filter(p=>!q||[p.name,p.place,p.notes,p.interest].join(" ").toLowerCase().includes(q)).sort((a,b)=>a._dist-b._dist);
+$("list").innerHTML=arr.length?arr.map(card).join(""):`<div class="empty">${tr("noCoords")}</div>`;
 }
-function useCurrentLocation(){
- if(!navigator.geolocation){alert(t("位置情報を利用できません。","Location is not available.","无法使用定位。"));return}
- navigator.geolocation.getCurrentPosition(pos=>{
-   $("lat").value=pos.coords.latitude.toFixed(6);$("lon").value=pos.coords.longitude.toFixed(6);
-   alert(t("現在地を登録しました。保存してください。","Current location added. Please save.","当前位置已添加，请保存。"));
- },()=>alert(t("位置情報を取得できませんでした。","Could not get your location.","无法获取当前位置。")),
- {enableHighAccuracy:true,timeout:10000,maximumAge:60000});
-}
-
 function card(p){
- let tags=(p.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join("");
- return `<article class="card"><div class="row"><div><div class="name">${esc(p.name)}</div><div class="muted">${esc(p.place||"場所未登録")} ${p.date?"・ "+esc(p.date):""}${p._dist!=null?" ・ 📍 "+(p._dist<1?Math.round(p._dist*1000)+"m":p._dist.toFixed(1)+"km"):""}</div></div></div>
- ${p.urgent?`<span class="tag" style="background:#fee2e2;color:#b91c1c">⚡緊急訪問</span>`:""}${p.interest?`<div class="muted" style="margin-top:8px">関心・背景：${esc(p.interest)}</div>`:""}${p.notes?`<div style="margin-top:8px;white-space:pre-wrap">${esc(p.notes)}</div>`:""}<div>${tags}</div>
- ${p.next?`<div class="muted" style="margin-top:8px">次回訪問：${esc(p.next)}</div>`:""}
- <div class="actions">${p.map?`<button onclick="window.open('${esc(p.map)}','_blank')">地図</button>`:""}<button onclick="edit('${p.id}')">編集</button><button onclick="duplicate('${p.id}')">複製</button><button class="danger" onclick="removePerson('${p.id}')">削除</button></div></article>`
+let tags=(p.tags||[]).map(x=>`<span class="tag">${esc(x)}</span>`).join("");
+let d=p._dist!=null?` · 📍 ${p._dist<1?Math.round(p._dist*1000)+"m":p._dist.toFixed(1)+"km"}`:"";
+let map=p.map||makeMap(p.place);
+return `<article class="card"><div class="row"><div><div class="name">${esc(p.name)}</div><div class="muted">${esc(p.place||tr("noLoc"))}${p.date?" · "+esc(p.date):""}${d}</div></div></div>${p.urgent?`<span class="tag">⚡</span>`:""}${p.interest?`<div class="muted" style="margin-top:8px">${esc(p.interest)}</div>`:""}${p.notes?`<div style="margin-top:8px;white-space:pre-wrap">${esc(p.notes)}</div>`:""}<div>${tags}</div>${p.next?`<div class="muted" style="margin-top:8px">${esc(p.next)}</div>`:""}<div class="actions">${map?`<button onclick="window.open('${esc(map)}','_blank')">${tr("maps")}</button>`:""}<button onclick="edit('${esc(p.id)}')">${tr("edit")}</button><button onclick="duplicate('${esc(p.id)}')">${tr("copy")}</button><button class="danger" onclick="removePerson('${esc(p.id)}')">${tr("delete")}</button></div></article>`
 }
-function openForm(p=null){$("dlgTitle").textContent=p?"編集":"新しい人";$("id").value=p?.id||"";$("name").value=p?.name||"";$("date").value=p?.date||"";$("place").value=p?.place||"";$("map").value=p?.map||"";$("lat").value=p?.lat??"";$("lon").value=p?.lon??"";$("interest").value=p?.interest||"";$("next").value=p?.next||"";$("notes").value=p?.notes||"";$("tags").value=(p?.tags||[]).join(", ");$("urgent").checked=!!p?.urgent;dlg.showModal()}
+function openForm(p=null){$("dlgTitle").textContent=p?tr("edit"):tr("new");$("id").value=p?.id||"";$("name").value=p?.name||"";$("date").value=p?.date||"";$("place").value=p?.place||"";$("map").value=p?.map||makeMap(p?.place||"");$("lat").value=Number.isFinite(p?.lat)?p.lat:"";$("lon").value=Number.isFinite(p?.lon)?p.lon:"";$("interest").value=p?.interest||"";$("next").value=p?.next||"";$("notes").value=p?.notes||"";$("tags").value=(p?.tags||[]).join(", ");$("urgent").checked=!!p?.urgent;dlg.showModal()}
 function edit(id){openForm(people.find(p=>p.id===id))}
-function savePerson(e){e.preventDefault();let id=$("id").value||crypto.randomUUID(), old=people.find(p=>p.id===id);let p={id,name:$("name").value.trim(),date:$("date").value,place:$("place").value.trim(),map:$("map").value.trim(),lat:$("lat").value?Number($("lat").value):null,lon:$("lon").value?Number($("lon").value):null,interest:$("interest").value.trim(),next:$("next").value,notes:$("notes").value.trim(),tags:$("tags").value.split(",").map(x=>x.trim()).filter(Boolean),urgent:$("urgent").checked};if(old)people=people.map(x=>x.id===id?p:x);else people.push(p);save();dlg.close();render()}
-function removePerson(id){if(confirm("この記録を削除しますか？")){people=people.filter(p=>p.id!==id);save();render()}}
-function duplicate(id){let p=structuredClone(people.find(x=>x.id===id));p.id=crypto.randomUUID();p.name+="（複製）";people.push(p);save();render()}
-function exportData(){let b=new Blob([JSON.stringify(people,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="revisit-list-backup.json";a.click()}
-function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!Array.isArray(x))throw 0;people=x;save();render();alert("復元しました。")}catch{alert("バックアップ形式が正しくありません。")}};r.readAsText(f)}
-render(); applyLang(); $("lang").value=currentLang();
+function savePerson(e){e.preventDefault();let id=$("id").value||crypto.randomUUID(),p={id,name:$("name").value.trim(),date:$("date").value,place:$("place").value.trim(),map:$("map").value.trim()||makeMap($("place").value.trim()),lat:$("lat").value?Number($("lat").value):null,lon:$("lon").value?Number($("lon").value):null,interest:$("interest").value.trim(),next:$("next").value,notes:$("notes").value.trim(),tags:$("tags").value.split(",").map(x=>x.trim()).filter(Boolean),urgent:$("urgent").checked};let old=people.some(x=>x.id===id);people=old?people.map(x=>x.id===id?p:x):[...people,p];save();dlg.close();render()}
+function useCurrentLocation(){if(!navigator.geolocation)return alert(tr("locationFail"));navigator.geolocation.getCurrentPosition(pos=>{$("lat").value=pos.coords.latitude.toFixed(6);$("lon").value=pos.coords.longitude.toFixed(6);alert(tr("saved"))},()=>alert(tr("locationFail")),{enableHighAccuracy:true,timeout:15000,maximumAge:60000})}
+function removePerson(id){if(confirm(tr("delete")+"?")){people=people.filter(x=>x.id!==id);save();render()}}
+function duplicate(id){let p=structuredClone(people.find(x=>x.id===id));p.id=crypto.randomUUID();people.push(p);save();render()}
+function exportData(){let payload={version:1,app:"再訪問リスト",exportedAt:new Date().toISOString(),people};let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}));a.download="再訪問リスト_バックアップ_"+new Date().toISOString().slice(0,10)+".json";a.click()}
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result),arr=Array.isArray(x)?x:x.people;if(!Array.isArray(arr))throw 0;people=arr.map(normalize);save();render();alert(people.length+tr("restored"))}catch{alert("JSON error")}};r.readAsText(f,"utf-8");e.target.value=""}
+applyLang();render();
 </script>
-
 <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{}));
-}
+if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 </script>
-
-<section class="card" id="data-tools" style="margin-top:16px;">
-  <h2>💾 データ管理</h2>
-  <p style="font-size:.9em;opacity:.8;">この端末のアプリデータをバックアップしたり、JSONファイルから復元できます。</p>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;">
-    <button type="button" onclick="exportRevisitData()">⬇️ バックアップ</button>
-    <label style="display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;background:#eef2ff;cursor:pointer;">
-      ⬆️ 復元
-      <input type="file" accept=".json,application/json" onchange="importRevisitData(event)" style="display:none;">
-    </label>
-  </div>
-  <div id="dataStatus" style="margin-top:10px;font-size:.9em;"></div>
-</section>
-
-
-<script>
-function getRevisitStorageKey() {
-  return "revisit-list-v1";
-}
-
-function exportRevisitData() {
-  try {
-    const key = getRevisitStorageKey();
-    const raw = localStorage.getItem(key);
-    if (!raw) {
-      setDataStatus("保存されているデータがありません。");
-      return;
-    }
-    const payload = {
-      version: 1,
-      app: "再訪問リスト",
-      exportedAt: new Date().toISOString(),
-      people: JSON.parse(raw)
-    };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "再訪問リスト_バックアップ_" +
-      new Date().toISOString().slice(0,10) + ".json";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setDataStatus("バックアップファイルを作成しました。");
-  } catch (e) {
-    console.error(e);
-    setDataStatus("バックアップに失敗しました。");
-  }
-}
-
-function importRevisitData(event) {
-  const file = event.target.files && event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function() {
-    try {
-      const obj = JSON.parse(reader.result);
-      let people = Array.isArray(obj) ? obj : obj.people;
-
-      if (!Array.isArray(people)) {
-        throw new Error("people配列がありません");
-      }
-
-      // 既存アプリの想定に合わせ、最低限のフィールドを補完
-      people = people.map((p, i) => ({
-        id: p.id || ("import-" + Date.now() + "-" + i),
-        name: p.name || "",
-        visitDate: p.visitDate || "",
-        place: p.place || "",
-        mapLink: p.mapLink || "",
-        latitude: p.latitude ?? null,
-        longitude: p.longitude ?? null,
-        interest: p.interest || "",
-        nextVisitDate: p.nextVisitDate || "",
-        notes: p.notes || "",
-        tags: Array.isArray(p.tags) ? p.tags : [],
-        urgent: Boolean(p.urgent)
-      }));
-
-      localStorage.setItem(getRevisitStorageKey(), JSON.stringify(people));
-
-      setDataStatus(people.length + "件を復元しました。画面を更新します。");
-
-      // 既存アプリの再描画関数があれば利用
-      setTimeout(() => {
-        if (typeof render === "function") render();
-        else if (typeof renderPeople === "function") renderPeople();
-        else if (typeof loadPeople === "function") loadPeople();
-        else location.reload();
-      }, 700);
-
-    } catch (e) {
-      console.error(e);
-      setDataStatus("復元できませんでした。JSONファイルを確認してください。");
-    } finally {
-      event.target.value = "";
-    }
-  };
-  reader.readAsText(file, "utf-8");
-}
-
-function setDataStatus(message) {
-  const el = document.getElementById("dataStatus");
-  if (el) el.textContent = message;
-}
-</script>
-
 </body></html>
