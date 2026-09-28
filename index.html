@@ -94,7 +94,6 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
     <div class="title-row"><h1 data-i18n="title">再訪問リスト</h1><input id="search" class="search" data-placeholder="search" placeholder="名前・場所・メモを検索"></div>
     <nav>
 <button class="primary" onclick="openForm()" data-i18n="new">＋ 新しい人</button>
-<button type="button" onclick="startVoiceImport()" data-i18n="voiceImport">🎙️ 音声から追加</button>
 <button onclick="setFilter('all')" data-i18n="all">すべて</button>
 <button onclick="setFilter('today')" data-i18n="today">今日</button>
 <button onclick="findNearby()" data-i18n="near">📍 現在地から近い順</button>
@@ -144,21 +143,21 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
 </section>
 </main>
 
-<dialog id="voiceDlg"><div class="form">
-<h2 data-i18n="voiceTitle">🎙️ 音声から新しい人を追加</h2>
-<p class="muted" data-i18n="voiceHelp">名前、場所、話した内容、次回訪問などを自然に話してください。音声を文字にして項目を自動整理します。</p>
-<div id="voiceStatus" class="status" data-i18n="voiceReady">マイクボタンを押して話してください。</div>
-<div class="field"><label data-i18n="transcript">認識した内容</label><textarea id="voiceTranscript" readonly></textarea></div>
-<div class="modal-actions">
-<button type="button" onclick="voiceDlg.close();stopVoice()" data-i18n="cancel">キャンセル</button>
-<button type="button" class="primary" id="voiceStartBtn" onclick="toggleVoice()" data-i18n="voiceStart">🎙️ 話す</button>
-</div></div></dialog>
-
 <dialog id="dlg"><form class="form" onsubmit="savePerson(event)">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px">
 <h2 id="dlgTitle" style="margin-bottom:0">新しい人</h2>
 <button type="button" onclick="dlg.close()" data-i18n="cancel">キャンセル</button>
-</div><input type="hidden" id="id"><div class="grid">
+</div><input type="hidden" id="id">
+<div class="field wide" style="border:1px solid var(--border,#ddd);padding:12px;border-radius:12px">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
+    <button type="button" onclick="focusVoiceInput()" data-i18n="voiceInput">🎙️ 音声入力</button>
+    <button type="button" onclick="organizeVoiceIntoForm()" data-i18n="voiceOrganize">✨ 内容を自動整理</button>
+  </div>
+  <div class="muted" style="margin-bottom:8px" data-i18n="voicePrompt">下の入力欄をタップして、iPhoneキーボードの🎤で話してください。その後「内容を自動整理」を押します。</div>
+  <textarea id="voiceInput" rows="3" placeholder="例：ジョンさんです。場所はミリ。聖書に興味があります。来週もう一度訪問します。"></textarea>
+  <div id="voiceOrganizeStatus" class="muted" style="margin-top:6px"></div>
+</div>
+<div class="grid">
 <div class="field"><label data-i18n="name">名前</label><input id="name" required></div><div class="field"><label data-i18n="visitDate">訪問日</label><input id="date" type="date"></div>
 <div class="field"><label data-i18n="place">場所</label><input id="place"></div><div class="field"><label data-i18n="mapLink">地図リンク</label><input id="map" placeholder="Google Maps"></div>
 <div class="field"><label data-i18n="lat">緯度</label><input id="lat" type="number" step="any"></div><div class="field"><label data-i18n="lon">経度</label><input id="lon" type="number" step="any"></div>
@@ -172,128 +171,31 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
 <script>
 const KEY="revisit-list-v1";
 const I18N={
-ja:{title:"再訪問リスト",new:"＋ 新しい人",all:"すべて",today:"今日",near:"📍 現在地から近い順",sortNew:"↓ 新しい順",sortOld:"↑ 古い順",from:"開始日",to:"終了日",clearRange:"期間を解除",urgent:"⚡ 緊急",recent:"最近",voiceImport:"🎙️ 音声から追加",voiceTitle:"🎙️ 音声から新しい人を追加",voiceHelp:"名前、場所、話した内容、次回訪問などを自然に話してください。音声を文字にして項目を自動整理します。",voiceReady:"マイクボタンを押して話してください。",transcript:"認識した内容",voiceStart:"🎙️ 話す",voiceStop:"⏹️ 停止",voiceUnsupported:"このブラウザでは音声認識を利用できません。Android版Chromeなどでお試しください。",voiceListening:"聞いています…話し終わったら停止してください。",voiceDone:"音声を分析しました。内容を確認して保存してください。",voiceError:"音声を認識できませんでした。マイクの許可とインターネット接続を確認してください。",voicePermission:"マイクの使用を許可してください。Safariのサイト設定でマイクを許可して、もう一度お試しください。",voiceIOS:"iPhoneではSafariの音声認識を使わず、iPhoneキーボードの🎤を使います。下の入力欄をタップして、キーボードの🎤を押して話してください。終わったら「入力して続ける」を押します。",voiceManual:"音声認識を利用できないため、下の入力欄に入力・貼り付けてください。iPhoneならキーボードの🎤で音声入力できます。",voiceUseText:"📝 入力して続ける",voiceEmpty:"内容がありません。入力欄に話した内容を入れてください。",voiceNetwork:"音声認識サービスに接続できませんでした。ネット接続を確認してください。",backup:"⬇️ バックアップ",restore:"⬆️ 復元",search:"名前・場所・メモを検索",heroTitle:"今日の再訪問をチェック 👋",heroText:"会った人・話したこと・次に訪問したい人を、ここにまとめておけます。",todayPeople:"今日訪問する人",overduePeople:"予定日を過ぎた人",nearPeople:"現在地から近い人",urgentPeople:"緊急訪問できる人",recentPeople:"最近会った人",dataTitle:"💾 データ管理",dataText:"この端末のデータをバックアップ・復元します。個人データはGitHubにアップロードしないでください。",name:"名前",visitDate:"出会った日",place:"場所",mapLink:"地図リンク",lat:"緯度",lon:"経度",saveCurrent:"現在地を取得して地図リンクも登録",interest:"宗教・関心など",nextDate:"次回訪問",notes:"メモ",tags:"タグ（カンマ区切り）",urgentFlag:"緊急訪問候補にする",cancel:"キャンセル",save:"保存",registered:"登録人数",todayRevisit:"今日の再訪問",nextTalk:"次回話す",noPeople:"該当する人はいません。",locationFail:"位置情報を取得できませんでした。iPhoneの位置情報許可を確認してください。",noCoords:"住所から位置情報を取得できた人がまだいません。もう一度実行すると続きから試します。",geocoding:"住所から位置情報を調べています…",geocoded:"件の住所の位置情報を取得しました。",nearDone:"近い順に表示しました。",gettingLocation:"現在地を取得しています…",locationFound:"現在地を取得しました",nearReady:"近い人を表示できます。",remaining:"件の住所はまだ位置情報を取得できません。",maps:"地図",edit:"編集",copy:"複製",delete:"削除",distance:"距離",noLoc:"場所未登録",saved:"現在地を登録しました。保存してください。",restored:"件を復元しました。"} ,
-en:{title:"Revisit List",new:"+ New Person",all:"All",today:"Today",near:"📍 Nearest First",sortNew:"↓ Newest first",sortOld:"↑ Oldest first",from:"From",to:"To",clearRange:"Clear range",urgent:"⚡ Urgent",recent:"Recent",voiceImport:"🎙️ Add by voice",voiceTitle:"🎙️ Add a new person by voice",voiceHelp:"Speak naturally about the name, place, conversation, and next visit. The app will transcribe and organize the information.",voiceReady:"Press the microphone button and speak.",transcript:"Recognized speech",voiceStart:"🎙️ Speak",voiceStop:"⏹️ Stop",voiceUnsupported:"Speech recognition is not supported in this browser. Try Chrome on Android.",voiceListening:"Listening… press stop when finished.",voiceDone:"The speech was analyzed. Check the fields and save.",voiceError:"Could not recognize the speech. Check microphone permission and internet connection.",voicePermission:"Please allow microphone access in Safari site settings, then try again.",voiceIOS:"On iPhone, Safari speech recognition is not used. Tap the text box and use the 🎤 microphone on the iPhone keyboard to dictate. Then tap Continue.",voiceManual:"Speech recognition is unavailable. Type or paste the information below. On iPhone, use the 🎤 microphone on the keyboard to dictate.",voiceUseText:"📝 Continue with text",voiceEmpty:"There is no text yet. Dictate or enter the information first.",voiceNetwork:"Could not connect to speech recognition. Check your internet connection.",backup:"⬇️ Backup",restore:"⬆️ Restore",search:"Search name, place or notes",heroTitle:"Check today's revisits 👋",heroText:"Keep people, conversations and next visits in one place.",todayPeople:"Today's visits",overduePeople:"Overdue visits",nearPeople:"Nearest to me",urgentPeople:"Urgent visits",recentPeople:"Recently visited",dataTitle:"💾 Data",dataText:"Backup and restore data on this device. Do not upload personal data to GitHub.",name:"Name",visitDate:"Date met",place:"Place",mapLink:"Map link",lat:"Latitude",lon:"Longitude",saveCurrent:"Save current location for this person",interest:"Interest / background",nextDate:"Next visit",notes:"Notes",tags:"Tags (comma separated)",urgentFlag:"Mark as urgent",cancel:"Cancel",save:"Save",registered:"People",todayRevisit:"Today's revisits",nextTalk:"Next talk",noPeople:"No matching people.",locationFail:"Could not get your location. Check iPhone location permission.",noCoords:"No saved coordinates yet. Run this again to continue.",geocoding:"Looking up locations from addresses…",geocoded:" locations were found.",nearDone:"Sorted by distance.",gettingLocation:"Getting your location…",locationFound:"Your location was found",nearReady:"Nearby people can now be shown.",remaining:" addresses still need location data.",maps:"Map",edit:"Edit",copy:"Copy",delete:"Delete",distance:"Distance",noLoc:"No location",saved:"Location added. Please save.",restored:" people restored."},
-zh:{title:"再访名单",new:"＋ 新增联系人",all:"全部",today:"今天",near:"📍 按距离排序",sortNew:"↓ 最新在前",sortOld:"↑ 最旧在前",from:"开始日期",to:"结束日期",clearRange:"清除期间",urgent:"⚡ 紧急",recent:"最近",voiceImport:"🎙️ 语音添加",voiceTitle:"🎙️ 用语音新增联系人",voiceHelp:"自然说出姓名、地点、谈话内容和下次访问等信息。应用会把语音转换成文字并自动整理。",voiceReady:"请按麦克风按钮开始说话。",transcript:"识别内容",voiceStart:"🎙️ 开始说话",voiceStop:"⏹️ 停止",voiceUnsupported:"此浏览器不支持语音识别。请尝试 Android Chrome。",voiceListening:"正在聆听……说完后请停止。",voiceDone:"已分析语音内容。请确认资料后保存。",voiceError:"无法识别语音。请检查麦克风权限和网络连接。",voicePermission:"请在Safari网站设置中允许使用麦克风，然后再试一次。",voiceIOS:"在iPhone上不使用Safari的网页语音识别。请点击输入框，再点击iPhone键盘上的🎤进行语音输入，完成后点击“输入后继续”。",voiceManual:"无法使用网页语音识别。请在下面输入或粘贴内容。iPhone可以使用键盘上的🎤进行语音输入。",voiceUseText:"📝 输入后继续",voiceEmpty:"还没有内容。请先输入或语音输入。",voiceNetwork:"无法连接语音识别服务，请检查网络连接。",backup:"⬇️ 备份",restore:"⬆️ 恢复",search:"搜索姓名、地点或备注",heroTitle:"查看今天的再访 👋",heroText:"把见过的人、谈过的内容和下次访问集中记录。",todayPeople:"今天访问",overduePeople:"超过预定日期",nearPeople:"离当前位置最近",urgentPeople:"紧急访问",recentPeople:"最近访问",dataTitle:"💾 数据管理",dataText:"在本设备备份和恢复数据。不要把个人数据上传到GitHub。",name:"姓名",visitDate:"见面日期",place:"地点",mapLink:"地图链接",lat:"纬度",lon:"经度",saveCurrent:"将当前位置保存给此联系人",interest:"兴趣 / 背景",nextDate:"下次访问",notes:"备注",tags:"标签（逗号分隔）",urgentFlag:"标记为紧急",cancel:"取消",save:"保存",registered:"联系人",todayRevisit:"今天再访",nextTalk:"下次谈",noPeople:"没有符合条件的人。",locationFail:"无法获取当前位置，请检查iPhone定位权限。",noCoords:"还没有保存坐标。再次运行可继续尝试。",geocoding:"正在根据地址查找位置…",geocoded:" 个地址已找到位置。",nearDone:"已按距离排序。",gettingLocation:"正在获取当前位置…",locationFound:"已获取当前位置",nearReady:"现在可以显示附近联系人。",remaining:" 个地址还没有位置信息。",maps:"地图",edit:"编辑",copy:"复制",delete:"删除",distance:"距离",noLoc:"没有地点",saved:"当前位置已添加，请保存。",restored:" 个联系人已恢复。"}};
+ja:{title:"再訪問リスト",new:"＋ 新しい人",all:"すべて",today:"今日",near:"📍 現在地から近い順",sortNew:"↓ 新しい順",sortOld:"↑ 古い順",from:"開始日",to:"終了日",clearRange:"期間を解除",urgent:"⚡ 緊急",recent:"最近",voiceImport:"🎙️ 音声から追加",voiceInput:"🎙️ 音声入力",voiceOrganize:"✨ 内容を自動整理",voicePrompt:"下の入力欄をタップして、iPhoneキーボードの🎤で話してください。その後「内容を自動整理」を押します。",voiceTitle:"🎙️ 音声から新しい人を追加",voiceHelp:"名前、場所、話した内容、次回訪問などを自然に話してください。音声を文字にして項目を自動整理します。",voiceReady:"マイクボタンを押して話してください。",transcript:"認識した内容",voiceStart:"🎙️ 話す",voiceStop:"⏹️ 停止",voiceUnsupported:"このブラウザでは音声認識を利用できません。Android版Chromeなどでお試しください。",voiceListening:"聞いています…話し終わったら停止してください。",voiceDone:"音声を分析しました。内容を確認して保存してください。",voiceError:"音声を認識できませんでした。マイクの許可とインターネット接続を確認してください。",voicePermission:"マイクの使用を許可してください。Safariのサイト設定でマイクを許可して、もう一度お試しください。",voiceIOS:"iPhoneではSafariの音声認識を使わず、iPhoneキーボードの🎤を使います。下の入力欄をタップして、キーボードの🎤を押して話してください。終わったら「入力して続ける」を押します。",voiceManual:"音声認識を利用できないため、下の入力欄に入力・貼り付けてください。iPhoneならキーボードの🎤で音声入力できます。",voiceUseText:"📝 入力して続ける",voiceEmpty:"内容がありません。入力欄に話した内容を入れてください。",voiceNetwork:"音声認識サービスに接続できませんでした。ネット接続を確認してください。",backup:"⬇️ バックアップ",restore:"⬆️ 復元",search:"名前・場所・メモを検索",heroTitle:"今日の再訪問をチェック 👋",heroText:"会った人・話したこと・次に訪問したい人を、ここにまとめておけます。",todayPeople:"今日訪問する人",overduePeople:"予定日を過ぎた人",nearPeople:"現在地から近い人",urgentPeople:"緊急訪問できる人",recentPeople:"最近会った人",dataTitle:"💾 データ管理",dataText:"この端末のデータをバックアップ・復元します。個人データはGitHubにアップロードしないでください。",name:"名前",visitDate:"出会った日",place:"場所",mapLink:"地図リンク",lat:"緯度",lon:"経度",saveCurrent:"現在地を取得して地図リンクも登録",interest:"宗教・関心など",nextDate:"次回訪問",notes:"メモ",tags:"タグ（カンマ区切り）",urgentFlag:"緊急訪問候補にする",cancel:"キャンセル",save:"保存",registered:"登録人数",todayRevisit:"今日の再訪問",nextTalk:"次回話す",noPeople:"該当する人はいません。",locationFail:"位置情報を取得できませんでした。iPhoneの位置情報許可を確認してください。",noCoords:"住所から位置情報を取得できた人がまだいません。もう一度実行すると続きから試します。",geocoding:"住所から位置情報を調べています…",geocoded:"件の住所の位置情報を取得しました。",nearDone:"近い順に表示しました。",gettingLocation:"現在地を取得しています…",locationFound:"現在地を取得しました",nearReady:"近い人を表示できます。",remaining:"件の住所はまだ位置情報を取得できません。",maps:"地図",edit:"編集",copy:"複製",delete:"削除",distance:"距離",noLoc:"場所未登録",saved:"現在地を登録しました。保存してください。",restored:"件を復元しました。"} ,
+en:{title:"Revisit List",new:"+ New Person",all:"All",today:"Today",near:"📍 Nearest First",sortNew:"↓ Newest first",sortOld:"↑ Oldest first",from:"From",to:"To",clearRange:"Clear range",urgent:"⚡ Urgent",recent:"Recent",voiceImport:"🎙️ Add by voice",voiceInput:"🎙️ Voice input",voiceOrganize:"✨ Organize automatically",voicePrompt:"Tap the box below and use the 🎤 microphone on the iPhone keyboard. Then tap “Organize automatically”.",voiceTitle:"🎙️ Add a new person by voice",voiceHelp:"Speak naturally about the name, place, conversation, and next visit. The app will transcribe and organize the information.",voiceReady:"Press the microphone button and speak.",transcript:"Recognized speech",voiceStart:"🎙️ Speak",voiceStop:"⏹️ Stop",voiceUnsupported:"Speech recognition is not supported in this browser. Try Chrome on Android.",voiceListening:"Listening… press stop when finished.",voiceDone:"The speech was analyzed. Check the fields and save.",voiceError:"Could not recognize the speech. Check microphone permission and internet connection.",voicePermission:"Please allow microphone access in Safari site settings, then try again.",voiceIOS:"On iPhone, Safari speech recognition is not used. Tap the text box and use the 🎤 microphone on the iPhone keyboard to dictate. Then tap Continue.",voiceManual:"Speech recognition is unavailable. Type or paste the information below. On iPhone, use the 🎤 microphone on the keyboard to dictate.",voiceUseText:"📝 Continue with text",voiceEmpty:"There is no text yet. Dictate or enter the information first.",voiceNetwork:"Could not connect to speech recognition. Check your internet connection.",backup:"⬇️ Backup",restore:"⬆️ Restore",search:"Search name, place or notes",heroTitle:"Check today's revisits 👋",heroText:"Keep people, conversations and next visits in one place.",todayPeople:"Today's visits",overduePeople:"Overdue visits",nearPeople:"Nearest to me",urgentPeople:"Urgent visits",recentPeople:"Recently visited",dataTitle:"💾 Data",dataText:"Backup and restore data on this device. Do not upload personal data to GitHub.",name:"Name",visitDate:"Date met",place:"Place",mapLink:"Map link",lat:"Latitude",lon:"Longitude",saveCurrent:"Save current location for this person",interest:"Interest / background",nextDate:"Next visit",notes:"Notes",tags:"Tags (comma separated)",urgentFlag:"Mark as urgent",cancel:"Cancel",save:"Save",registered:"People",todayRevisit:"Today's revisits",nextTalk:"Next talk",noPeople:"No matching people.",locationFail:"Could not get your location. Check iPhone location permission.",noCoords:"No saved coordinates yet. Run this again to continue.",geocoding:"Looking up locations from addresses…",geocoded:" locations were found.",nearDone:"Sorted by distance.",gettingLocation:"Getting your location…",locationFound:"Your location was found",nearReady:"Nearby people can now be shown.",remaining:" addresses still need location data.",maps:"Map",edit:"Edit",copy:"Copy",delete:"Delete",distance:"Distance",noLoc:"No location",saved:"Location added. Please save.",restored:" people restored."},
+zh:{title:"再访名单",new:"＋ 新增联系人",all:"全部",today:"今天",near:"📍 按距离排序",sortNew:"↓ 最新在前",sortOld:"↑ 最旧在前",from:"开始日期",to:"结束日期",clearRange:"清除期间",urgent:"⚡ 紧急",recent:"最近",voiceImport:"🎙️ 语音添加",voiceInput:"🎙️ 语音输入",voiceOrganize:"✨ 自动整理内容",voicePrompt:"点击下面的输入框，再使用iPhone键盘上的🎤说话。完成后点击“自动整理内容”。",voiceTitle:"🎙️ 用语音新增联系人",voiceHelp:"自然说出姓名、地点、谈话内容和下次访问等信息。应用会把语音转换成文字并自动整理。",voiceReady:"请按麦克风按钮开始说话。",transcript:"识别内容",voiceStart:"🎙️ 开始说话",voiceStop:"⏹️ 停止",voiceUnsupported:"此浏览器不支持语音识别。请尝试 Android Chrome。",voiceListening:"正在聆听……说完后请停止。",voiceDone:"已分析语音内容。请确认资料后保存。",voiceError:"无法识别语音。请检查麦克风权限和网络连接。",voicePermission:"请在Safari网站设置中允许使用麦克风，然后再试一次。",voiceIOS:"在iPhone上不使用Safari的网页语音识别。请点击输入框，再点击iPhone键盘上的🎤进行语音输入，完成后点击“输入后继续”。",voiceManual:"无法使用网页语音识别。请在下面输入或粘贴内容。iPhone可以使用键盘上的🎤进行语音输入。",voiceUseText:"📝 输入后继续",voiceEmpty:"还没有内容。请先输入或语音输入。",voiceNetwork:"无法连接语音识别服务，请检查网络连接。",backup:"⬇️ 备份",restore:"⬆️ 恢复",search:"搜索姓名、地点或备注",heroTitle:"查看今天的再访 👋",heroText:"把见过的人、谈过的内容和下次访问集中记录。",todayPeople:"今天访问",overduePeople:"超过预定日期",nearPeople:"离当前位置最近",urgentPeople:"紧急访问",recentPeople:"最近访问",dataTitle:"💾 数据管理",dataText:"在本设备备份和恢复数据。不要把个人数据上传到GitHub。",name:"姓名",visitDate:"见面日期",place:"地点",mapLink:"地图链接",lat:"纬度",lon:"经度",saveCurrent:"将当前位置保存给此联系人",interest:"兴趣 / 背景",nextDate:"下次访问",notes:"备注",tags:"标签（逗号分隔）",urgentFlag:"标记为紧急",cancel:"取消",save:"保存",registered:"联系人",todayRevisit:"今天再访",nextTalk:"下次谈",noPeople:"没有符合条件的人。",locationFail:"无法获取当前位置，请检查iPhone定位权限。",noCoords:"还没有保存坐标。再次运行可继续尝试。",geocoding:"正在根据地址查找位置…",geocoded:" 个地址已找到位置。",nearDone:"已按距离排序。",gettingLocation:"正在获取当前位置…",locationFound:"已获取当前位置",nearReady:"现在可以显示附近联系人。",remaining:" 个地址还没有位置信息。",maps:"地图",edit:"编辑",copy:"复制",delete:"删除",distance:"距离",noLoc:"没有地点",saved:"当前位置已添加，请保存。",restored:" 个联系人已恢复。"}};
 function lang(){return localStorage.getItem("revisit-lang")||"ja"} function tr(k){return (I18N[lang()]||I18N.ja)[k]||k}
 function setLang(v){localStorage.setItem("revisit-lang",v);$("languageSelector").classList.remove("open");
-let recognition=null, voiceRunning=false, voiceFinal="", voiceManual=false;
-
-function speechLang(){return lang()==="en"?"en-US":lang()==="zh"?"zh-CN":"ja-JP"}
-
-async function startVoiceImport(){
-  voiceFinal="";
-  voiceManual=false;
-  $("voiceTranscript").value="";
-  $("voiceTranscript").setAttribute("readonly","");
-  $("voiceStatus").textContent=tr("voiceReady");
-  $("voiceStartBtn").textContent=tr("voiceStart");
-  voiceRunning=false;
-  recognition=null;
-  voiceDlg.showModal();
-
-  // iPhone/iPad Safari does not reliably expose SpeechRecognition.
-  // Use the native iOS keyboard dictation as the reliable fallback.
-  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-
-  if(isIOS && !SR){
-    voiceManual=true;
-    $("voiceTranscript").removeAttribute("readonly");
-    $("voiceStatus").textContent=tr("voiceIOS");
-    $("voiceStartBtn").textContent=tr("voiceUseText");
-    setTimeout(()=>{$("voiceTranscript").focus()},250);
-  }
+function focusVoiceInput(){
+  const box=$("voiceInput");
+  box.focus();
+  try{ box.setSelectionRange(box.value.length,box.value.length); }catch(e){}
 }
-
-function toggleVoice(){
-  if(voiceManual){
-    finishVoice();
-    return;
-  }
-  voiceRunning?stopVoice():beginVoice();
-}
-
-function beginVoice(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-
-  if(!SR){
-    voiceManual=true;
-    $("voiceTranscript").removeAttribute("readonly");
-    $("voiceStatus").textContent=tr("voiceManual");
-    $("voiceStartBtn").textContent=tr("voiceUseText");
-    $("voiceTranscript").focus();
-    return;
-  }
-
-  try{
-    recognition=new SR();
-    recognition.lang=speechLang();
-    recognition.continuous=false;
-    recognition.interimResults=true;
-    recognition.maxAlternatives=1;
-
-    recognition.onstart=()=>{
-      voiceRunning=true;
-      voiceFinal="";
-      $("voiceStatus").textContent=tr("voiceListening");
-      $("voiceStartBtn").textContent=tr("voiceStop");
-    };
-
-    recognition.onresult=e=>{
-      let interim="";
-      for(let i=e.resultIndex;i<e.results.length;i++){
-        const t=e.results[i][0].transcript.trim();
-        if(e.results[i].isFinal) voiceFinal+=(voiceFinal?" ":"")+t;
-        else interim+=(interim?" ":"")+t;
-      }
-      $("voiceTranscript").value=(voiceFinal+(interim?" "+interim:"")).trim();
-    };
-
-    recognition.onerror=e=>{
-      voiceRunning=false;
-      $("voiceStartBtn").textContent=tr("voiceStart");
-      if(e.error==="not-allowed"||e.error==="service-not-allowed")
-        $("voiceStatus").textContent=tr("voicePermission");
-      else if(e.error==="network")
-        $("voiceStatus").textContent=tr("voiceNetwork");
-      else if(e.error!=="aborted")
-        $("voiceStatus").textContent=tr("voiceError")+" ("+e.error+")";
-    };
-
-    recognition.onend=()=>{
-      voiceRunning=false;
-      $("voiceStartBtn").textContent=tr("voiceStart");
-      if($("voiceTranscript").value.trim()) finishVoice();
-    };
-
-    recognition.start();
-  }catch(e){
-    voiceRunning=false;
-    $("voiceStartBtn").textContent=tr("voiceStart");
-    $("voiceStatus").textContent=tr("voiceError");
-  }
-}
-
-function stopVoice(){
-  if(voiceManual){finishVoice();return}
-  if(!recognition){finishVoice();return}
-  try{recognition.stop()}catch(e){finishVoice()}
-}
-
-function finishVoice(){
-  const text=$("voiceTranscript").value.trim();
-  if(!text){
-    $("voiceStatus").textContent=tr("voiceEmpty");
-    $("voiceTranscript").focus();
-    return;
-  }
-  $("voiceStartBtn").textContent=tr("voiceStart");
+function organizeVoiceIntoForm(){
+  const text=$("voiceInput").value.trim();
+  if(!text){ focusVoiceInput(); return; }
   const parsed=parseVoice(text);
-  voiceDlg.close();
-  openForm(parsed);
-  $("nearStatus").innerHTML=`<div class="status">🎙️ ${tr("voiceDone")}</div>`;
+  if(parsed.name) $("name").value=parsed.name;
+  if(parsed.date) $("date").value=parsed.date;
+  if(parsed.place) $("place").value=parsed.place;
+  if(parsed.map) $("map").value=parsed.map;
+  if(parsed.interest) $("interest").value=parsed.interest;
+  if(parsed.next) $("next").value=parsed.next;
+  if(parsed.notes) $("notes").value=parsed.notes;
+  if(parsed.tags?.length) $("tags").value=parsed.tags.join(", ");
+  if(parsed.urgent) $("urgent").checked=true;
+  const status=document.getElementById("voiceOrganizeStatus");
+  if(status) status.textContent=tr("voiceDone");
 }
 
 function dateFromText(text){
@@ -431,7 +333,14 @@ let d=p._dist!=null?` · 📍 ${p._dist<1?Math.round(p._dist*1000)+"m":p._dist.t
 let map=p.map||makeMap(p.place);
 return `<article class="card"><div class="row"><div><div class="name">${esc(p.name)}</div><div class="muted">${esc(p.place||tr("noLoc"))}${p.date?" · "+esc(p.date):""}${d}</div></div></div>${p.urgent?`<span class="tag">⚡</span>`:""}${p.interest?`<div class="muted" style="margin-top:8px">${esc(p.interest)}</div>`:""}${p.notes?`<div style="margin-top:8px;white-space:pre-wrap">${esc(p.notes)}</div>`:""}<div>${tags}</div>${p.next?`<div class="muted" style="margin-top:8px">${isOverdue(p)?"⏰ ":isTodayNext(p)?"📅 ":""}${esc(p.next)}</div>`:""}<div class="actions">${map?`<button onclick="window.open('${esc(map)}','_blank')">${tr("maps")}</button>`:""}<button onclick="edit('${esc(p.id)}')">${tr("edit")}</button><button onclick="duplicate('${esc(p.id)}')">${tr("copy")}</button><button class="danger" onclick="removePerson('${esc(p.id)}')">${tr("delete")}</button></div></article>`
 }
-function openForm(p=null){$("dlgTitle").textContent=p?tr("edit"):tr("new");$("id").value=p?.id||"";$("name").value=p?.name||"";$("date").value=p?.date||"";$("place").value=p?.place||"";$("map").value=p?.map||makeMap(p?.place||"");$("lat").value=Number.isFinite(p?.lat)?p.lat:"";$("lon").value=Number.isFinite(p?.lon)?p.lon:"";$("interest").value=p?.interest||"";$("next").value=p?.next||"";$("notes").value=p?.notes||"";$("tags").value=(p?.tags||[]).join(", ");$("urgent").checked=!!p?.urgent;dlg.showModal()}
+function openForm(p=null){
+  $("dlgTitle").textContent=p?tr("edit"):tr("new");
+  $("id").value=p?.id||"";$("name").value=p?.name||"";$("date").value=p?.date||"";$("place").value=p?.place||"";$("map").value=p?.map||makeMap(p?.place||"");
+  $("lat").value=Number.isFinite(p?.lat)?p.lat:"";$("lon").value=Number.isFinite(p?.lon)?p.lon:"";$("interest").value=p?.interest||"";$("next").value=p?.next||"";$("notes").value=p?.notes||"";$("tags").value=(p?.tags||[]).join(", ");$("urgent").checked=!!p?.urgent;
+  $("voiceInput").value="";
+  const status=document.getElementById("voiceOrganizeStatus"); if(status) status.textContent="";
+  dlg.showModal();
+}
 function edit(id){openForm(people.find(p=>p.id===id))}
 function savePerson(e){e.preventDefault();let id=$("id").value||crypto.randomUUID(),p={id,name:$("name").value.trim(),date:$("date").value,place:$("place").value.trim(),map:$("map").value.trim()||makeMap($("place").value.trim()),lat:$("lat").value?Number($("lat").value):null,lon:$("lon").value?Number($("lon").value):null,interest:$("interest").value.trim(),next:$("next").value,notes:$("notes").value.trim(),tags:$("tags").value.split(",").map(x=>x.trim()).filter(Boolean),urgent:$("urgent").checked};let old=people.some(x=>x.id===id);people=old?people.map(x=>x.id===id?p:x):[...people,p];save();dlg.close();render()}
 function useCurrentLocation(){
