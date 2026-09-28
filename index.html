@@ -211,4 +211,113 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{}));
 }
 </script>
+
+<section class="card" id="data-tools" style="margin-top:16px;">
+  <h2>💾 データ管理</h2>
+  <p style="font-size:.9em;opacity:.8;">この端末のアプリデータをバックアップしたり、JSONファイルから復元できます。</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <button type="button" onclick="exportRevisitData()">⬇️ バックアップ</button>
+    <label style="display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;background:#eef2ff;cursor:pointer;">
+      ⬆️ 復元
+      <input type="file" accept=".json,application/json" onchange="importRevisitData(event)" style="display:none;">
+    </label>
+  </div>
+  <div id="dataStatus" style="margin-top:10px;font-size:.9em;"></div>
+</section>
+
+
+<script>
+function getRevisitStorageKey() {
+  return "revisit-list-v1";
+}
+
+function exportRevisitData() {
+  try {
+    const key = getRevisitStorageKey();
+    const raw = localStorage.getItem(key);
+    if (!raw) {
+      setDataStatus("保存されているデータがありません。");
+      return;
+    }
+    const payload = {
+      version: 1,
+      app: "再訪問リスト",
+      exportedAt: new Date().toISOString(),
+      people: JSON.parse(raw)
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "再訪問リスト_バックアップ_" +
+      new Date().toISOString().slice(0,10) + ".json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setDataStatus("バックアップファイルを作成しました。");
+  } catch (e) {
+    console.error(e);
+    setDataStatus("バックアップに失敗しました。");
+  }
+}
+
+function importRevisitData(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function() {
+    try {
+      const obj = JSON.parse(reader.result);
+      let people = Array.isArray(obj) ? obj : obj.people;
+
+      if (!Array.isArray(people)) {
+        throw new Error("people配列がありません");
+      }
+
+      // 既存アプリの想定に合わせ、最低限のフィールドを補完
+      people = people.map((p, i) => ({
+        id: p.id || ("import-" + Date.now() + "-" + i),
+        name: p.name || "",
+        visitDate: p.visitDate || "",
+        place: p.place || "",
+        mapLink: p.mapLink || "",
+        latitude: p.latitude ?? null,
+        longitude: p.longitude ?? null,
+        interest: p.interest || "",
+        nextVisitDate: p.nextVisitDate || "",
+        notes: p.notes || "",
+        tags: Array.isArray(p.tags) ? p.tags : [],
+        urgent: Boolean(p.urgent)
+      }));
+
+      localStorage.setItem(getRevisitStorageKey(), JSON.stringify(people));
+
+      setDataStatus(people.length + "件を復元しました。画面を更新します。");
+
+      // 既存アプリの再描画関数があれば利用
+      setTimeout(() => {
+        if (typeof render === "function") render();
+        else if (typeof renderPeople === "function") renderPeople();
+        else if (typeof loadPeople === "function") loadPeople();
+        else location.reload();
+      }, 700);
+
+    } catch (e) {
+      console.error(e);
+      setDataStatus("復元できませんでした。JSONファイルを確認してください。");
+    } finally {
+      event.target.value = "";
+    }
+  };
+  reader.readAsText(file, "utf-8");
+}
+
+function setDataStatus(message) {
+  const el = document.getElementById("dataStatus");
+  if (el) el.textContent = message;
+}
+</script>
+
 </body></html>
