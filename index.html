@@ -12,9 +12,9 @@
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#eef2ff,#f8fbff 45%,#f5f7fb);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 header{position:sticky;top:0;z-index:5;background:#fffffff2;backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:14px 16px 10px}
 h1{font-size:22px;margin:0 0 10px;font-weight:800}.search{width:100%;padding:12px 14px;border:1px solid #dfe4f2;border-radius:14px;font-size:16px;background:#fff}
-nav{display:flex;gap:7px;padding:10px 16px;overflow:auto;background:transparent;position:sticky;top:92px;z-index:4}
+nav{display:flex;gap:7px;padding:10px 16px;overflow:auto;background:transparent;position:sticky;top:132px;z-index:4}
 button,.btn{border:0;border-radius:12px;padding:10px 12px;font-weight:700;background:#e9edff;color:#3730a3;cursor:pointer;white-space:nowrap}button.primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}
-.lang{padding:9px;border-radius:10px;border:1px solid #dfe4f2;background:#fff;font-weight:700}
+.language-bar{display:flex;gap:6px;margin-top:10px}.lang-btn{flex:1;padding:9px 8px;border-radius:10px;border:1px solid #dfe4f2;background:#fff;color:#3730a3;font-weight:800}.lang-btn.active{background:#4f46e5;color:#fff;border-color:#4f46e5}.lang-btn:active{transform:scale(.98)}
 main{max-width:760px;margin:auto;padding:8px 16px 100px}.hero{background:linear-gradient(135deg,#4f46e5,#7c3aed 55%,#ec4899);color:#fff;border-radius:22px;padding:20px;margin:4px 0 14px;box-shadow:0 12px 30px #6366f133}.hero h2{margin:0 0 5px;font-size:22px}.hero p{margin:0;opacity:.9;font-size:13px}
 .dash{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}.dashCard{display:flex;gap:10px;align-items:center;text-align:left;background:#fff;border:1px solid var(--line);padding:13px;border-radius:15px;box-shadow:0 4px 15px #26315b0a}.dashIcon{font-size:25px}.dashCard b{font-size:21px;display:block}.dashCard small{font-size:11px;color:var(--muted)}.nearby{background:linear-gradient(145deg,#fff,#ecfdf5)}.urgent{background:linear-gradient(145deg,#fff,#fff1f2)}.recent{background:linear-gradient(145deg,#fff,#fff7ed)}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}.stat b{font-size:21px;display:block}.stat span{font-size:11px;color:var(--muted)}
@@ -24,7 +24,8 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
 </style>
 </head>
 <body>
-<header><h1 data-i18n="title">再訪問リスト</h1><input id="search" class="search" data-placeholder="search" placeholder="名前・場所・メモを検索"></header>
+<header><h1 data-i18n="title">再訪問リスト</h1><input id="search" class="search" data-placeholder="search" placeholder="名前・場所・メモを検索">
+<div class="language-bar" aria-label="Language"><button type="button" class="lang-btn" data-lang="ja" onclick="setLang('ja')">日本語</button><button type="button" class="lang-btn" data-lang="en" onclick="setLang('en')">English</button><button type="button" class="lang-btn" data-lang="zh" onclick="setLang('zh')">中文</button></div></header>
 <nav>
 <button class="primary" onclick="openForm()" data-i18n="new">＋ 新しい人</button>
 <button onclick="setFilter('all')" data-i18n="all">すべて</button>
@@ -34,7 +35,7 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
 <button onclick="setFilter('recent')" data-i18n="recent">最近</button>
 <button onclick="exportData()" data-i18n="backup">バックアップ</button>
 <label class="btn" style="cursor:pointer" data-i18n="restore">復元<input id="file" type="file" accept=".json,application/json" hidden onchange="importData(event)"></label>
-<select id="lang" class="lang" onchange="setLang(this.value)"><option value="ja">日本語</option><option value="en">English</option><option value="zh">中文</option></select>
+
 </nav>
 <main>
 <div class="hero"><h2 data-i18n="heroTitle">今日の再訪問をチェック 👋</h2><p data-i18n="heroText">会った人・話したこと・次に訪問したい人を、ここにまとめておけます。</p></div>
@@ -67,12 +68,12 @@ dialog{border:0;border-radius:20px;width:min(680px,94vw);padding:0;box-shadow:0 
 <script>
 const KEY="revisit-list-v1";
 const I18N={
-ja:{title:"再訪問リスト",new:"＋ 新しい人",all:"すべて",today:"今日",near:"📍 現在地から近い順",urgent:"⚡ 緊急",recent:"最近",backup:"⬇️ バックアップ",restore:"⬆️ 復元",search:"名前・場所・メモを検索",heroTitle:"今日の再訪問をチェック 👋",heroText:"会った人・話したこと・次に訪問したい人を、ここにまとめておけます。",todayPeople:"今日訪問する人",nearPeople:"現在地から近い人",urgentPeople:"緊急訪問できる人",recentPeople:"最近会った人",dataTitle:"💾 データ管理",dataText:"この端末のデータをバックアップ・復元します。個人データはGitHubにアップロードしないでください。",name:"名前",visitDate:"訪問日",place:"場所",mapLink:"地図リンク",lat:"緯度",lon:"経度",saveCurrent:"現在地をこの人の場所として登録",interest:"宗教・関心など",nextDate:"次回訪問",notes:"メモ",tags:"タグ（カンマ区切り）",urgentFlag:"緊急訪問候補にする",cancel:"キャンセル",save:"保存",registered:"登録人数",todayRevisit:"今日の再訪問",nextTalk:"次回話す",noPeople:"該当する人はいません。",locationFail:"位置情報を取得できませんでした。iPhoneの位置情報許可を確認してください。",noCoords:"住所から位置情報を取得できた人がまだいません。もう一度実行すると続きから試します。",geocoding:"住所から位置情報を調べています…",geocoded:"件の住所の位置情報を取得しました。",nearDone:"近い順に表示しました。",maps:"地図",edit:"編集",copy:"複製",delete:"削除",distance:"距離",noLoc:"場所未登録",saved:"現在地を登録しました。保存してください。",restored:"件を復元しました。"} ,
-en:{title:"Revisit List",new:"+ New Person",all:"All",today:"Today",near:"📍 Nearest First",urgent:"⚡ Urgent",recent:"Recent",backup:"⬇️ Backup",restore:"⬆️ Restore",search:"Search name, place or notes",heroTitle:"Check today's revisits 👋",heroText:"Keep people, conversations and next visits in one place.",todayPeople:"Today's visits",nearPeople:"Nearest to me",urgentPeople:"Urgent visits",recentPeople:"Recently visited",dataTitle:"💾 Data",dataText:"Backup and restore data on this device. Do not upload personal data to GitHub.",name:"Name",visitDate:"Visit date",place:"Place",mapLink:"Map link",lat:"Latitude",lon:"Longitude",saveCurrent:"Save current location for this person",interest:"Interest / background",nextDate:"Next visit",notes:"Notes",tags:"Tags (comma separated)",urgentFlag:"Mark as urgent",cancel:"Cancel",save:"Save",registered:"People",todayRevisit:"Today's revisits",nextTalk:"Next talk",noPeople:"No matching people.",locationFail:"Could not get your location. Check iPhone location permission.",noCoords:"No saved coordinates yet. Run this again to continue.",geocoding:"Looking up locations from addresses…",geocoded:" locations were found.",nearDone:"Sorted by distance.",maps:"Map",edit:"Edit",copy:"Copy",delete:"Delete",distance:"Distance",noLoc:"No location",saved:"Location added. Please save.",restored:" people restored."},
-zh:{title:"再访名单",new:"＋ 新增联系人",all:"全部",today:"今天",near:"📍 按距离排序",urgent:"⚡ 紧急",recent:"最近",backup:"⬇️ 备份",restore:"⬆️ 恢复",search:"搜索姓名、地点或备注",heroTitle:"查看今天的再访 👋",heroText:"把见过的人、谈过的内容和下次访问集中记录。",todayPeople:"今天访问",nearPeople:"离当前位置最近",urgentPeople:"紧急访问",recentPeople:"最近访问",dataTitle:"💾 数据管理",dataText:"在本设备备份和恢复数据。不要把个人数据上传到GitHub。",name:"姓名",visitDate:"访问日期",place:"地点",mapLink:"地图链接",lat:"纬度",lon:"经度",saveCurrent:"将当前位置保存给此联系人",interest:"兴趣 / 背景",nextDate:"下次访问",notes:"备注",tags:"标签（逗号分隔）",urgentFlag:"标记为紧急",cancel:"取消",save:"保存",registered:"联系人",todayRevisit:"今天再访",nextTalk:"下次谈",noPeople:"没有符合条件的人。",locationFail:"无法获取当前位置，请检查iPhone定位权限。",noCoords:"还没有保存坐标。再次运行可继续尝试。",geocoding:"正在根据地址查找位置…",geocoded:" 个地址已找到位置。",nearDone:"已按距离排序。",maps:"地图",edit:"编辑",copy:"复制",delete:"删除",distance:"距离",noLoc:"没有地点",saved:"当前位置已添加，请保存。",restored:" 个联系人已恢复。"}};
+ja:{title:"再訪問リスト",new:"＋ 新しい人",all:"すべて",today:"今日",near:"📍 現在地から近い順",urgent:"⚡ 緊急",recent:"最近",backup:"⬇️ バックアップ",restore:"⬆️ 復元",search:"名前・場所・メモを検索",heroTitle:"今日の再訪問をチェック 👋",heroText:"会った人・話したこと・次に訪問したい人を、ここにまとめておけます。",todayPeople:"今日訪問する人",nearPeople:"現在地から近い人",urgentPeople:"緊急訪問できる人",recentPeople:"最近会った人",dataTitle:"💾 データ管理",dataText:"この端末のデータをバックアップ・復元します。個人データはGitHubにアップロードしないでください。",name:"名前",visitDate:"訪問日",place:"場所",mapLink:"地図リンク",lat:"緯度",lon:"経度",saveCurrent:"現在地をこの人の場所として登録",interest:"宗教・関心など",nextDate:"次回訪問",notes:"メモ",tags:"タグ（カンマ区切り）",urgentFlag:"緊急訪問候補にする",cancel:"キャンセル",save:"保存",registered:"登録人数",todayRevisit:"今日の再訪問",nextTalk:"次回話す",noPeople:"該当する人はいません。",locationFail:"位置情報を取得できませんでした。iPhoneの位置情報許可を確認してください。",noCoords:"住所から位置情報を取得できた人がまだいません。もう一度実行すると続きから試します。",geocoding:"住所から位置情報を調べています…",geocoded:"件の住所の位置情報を取得しました。",nearDone:"近い順に表示しました。",gettingLocation:"現在地を取得しています…",locationFound:"現在地を取得しました",nearReady:"近い人を表示できます。",remaining:"件の住所はまだ位置情報を取得できません。",maps:"地図",edit:"編集",copy:"複製",delete:"削除",distance:"距離",noLoc:"場所未登録",saved:"現在地を登録しました。保存してください。",restored:"件を復元しました。"} ,
+en:{title:"Revisit List",new:"+ New Person",all:"All",today:"Today",near:"📍 Nearest First",urgent:"⚡ Urgent",recent:"Recent",backup:"⬇️ Backup",restore:"⬆️ Restore",search:"Search name, place or notes",heroTitle:"Check today's revisits 👋",heroText:"Keep people, conversations and next visits in one place.",todayPeople:"Today's visits",nearPeople:"Nearest to me",urgentPeople:"Urgent visits",recentPeople:"Recently visited",dataTitle:"💾 Data",dataText:"Backup and restore data on this device. Do not upload personal data to GitHub.",name:"Name",visitDate:"Visit date",place:"Place",mapLink:"Map link",lat:"Latitude",lon:"Longitude",saveCurrent:"Save current location for this person",interest:"Interest / background",nextDate:"Next visit",notes:"Notes",tags:"Tags (comma separated)",urgentFlag:"Mark as urgent",cancel:"Cancel",save:"Save",registered:"People",todayRevisit:"Today's revisits",nextTalk:"Next talk",noPeople:"No matching people.",locationFail:"Could not get your location. Check iPhone location permission.",noCoords:"No saved coordinates yet. Run this again to continue.",geocoding:"Looking up locations from addresses…",geocoded:" locations were found.",nearDone:"Sorted by distance.",gettingLocation:"Getting your location…",locationFound:"Your location was found",nearReady:"Nearby people can now be shown.",remaining:" addresses still need location data.",maps:"Map",edit:"Edit",copy:"Copy",delete:"Delete",distance:"Distance",noLoc:"No location",saved:"Location added. Please save.",restored:" people restored."},
+zh:{title:"再访名单",new:"＋ 新增联系人",all:"全部",today:"今天",near:"📍 按距离排序",urgent:"⚡ 紧急",recent:"最近",backup:"⬇️ 备份",restore:"⬆️ 恢复",search:"搜索姓名、地点或备注",heroTitle:"查看今天的再访 👋",heroText:"把见过的人、谈过的内容和下次访问集中记录。",todayPeople:"今天访问",nearPeople:"离当前位置最近",urgentPeople:"紧急访问",recentPeople:"最近访问",dataTitle:"💾 数据管理",dataText:"在本设备备份和恢复数据。不要把个人数据上传到GitHub。",name:"姓名",visitDate:"访问日期",place:"地点",mapLink:"地图链接",lat:"纬度",lon:"经度",saveCurrent:"将当前位置保存给此联系人",interest:"兴趣 / 背景",nextDate:"下次访问",notes:"备注",tags:"标签（逗号分隔）",urgentFlag:"标记为紧急",cancel:"取消",save:"保存",registered:"联系人",todayRevisit:"今天再访",nextTalk:"下次谈",noPeople:"没有符合条件的人。",locationFail:"无法获取当前位置，请检查iPhone定位权限。",noCoords:"还没有保存坐标。再次运行可继续尝试。",geocoding:"正在根据地址查找位置…",geocoded:" 个地址已找到位置。",nearDone:"已按距离排序。",gettingLocation:"正在获取当前位置…",locationFound:"已获取当前位置",nearReady:"现在可以显示附近联系人。",remaining:" 个地址还没有位置信息。",maps:"地图",edit:"编辑",copy:"复制",delete:"删除",distance:"距离",noLoc:"没有地点",saved:"当前位置已添加，请保存。",restored:" 个联系人已恢复。"}};
 function lang(){return localStorage.getItem("revisit-lang")||"ja"} function tr(k){return (I18N[lang()]||I18N.ja)[k]||k}
 function setLang(v){localStorage.setItem("revisit-lang",v);applyLang();render(); if(window.nearMode) renderNearbyDistance()}
-function applyLang(){document.documentElement.lang=lang();document.querySelectorAll("[data-i18n]").forEach(e=>e.textContent=tr(e.dataset.i18n));document.querySelectorAll("[data-placeholder]").forEach(e=>e.placeholder=tr(e.dataset.placeholder));document.getElementById("lang").value=lang()}
+function applyLang(){document.documentElement.lang=lang();document.querySelectorAll("[data-i18n]").forEach(e=>e.textContent=tr(e.dataset.i18n));document.querySelectorAll("[data-placeholder]").forEach(e=>e.placeholder=tr(e.dataset.placeholder));document.querySelectorAll(".lang-btn").forEach(e=>e.classList.toggle("active",e.dataset.lang===lang()))}
 const $=id=>document.getElementById(id);
 let people=loadPeople(), filter="all", userLat=null,userLon=null,nearMode=false;
 function normalize(p,i){return{id:p.id||"import-"+Date.now()+"-"+i,name:p.name||"",date:p.date||p.visitDate||"",place:p.place||"",map:p.map||p.mapLink||makeMap(p.place||""),lat:p.lat!=null?Number(p.lat):(p.latitude!=null?Number(p.latitude):null),lon:p.lon!=null?Number(p.lon):(p.longitude!=null?Number(p.longitude):null),interest:p.interest||"",next:p.next||p.nextVisitDate||"",notes:p.notes||"",tags:Array.isArray(p.tags)?p.tags:[],urgent:!!p.urgent}}
@@ -93,29 +94,32 @@ function distanceKm(a,b,c,d){const R=6371,rad=Math.PI/180,dl=(c-a)*rad,do_=(d-b)
 async function findNearby(){
 nearMode=true;
 if(!navigator.geolocation){$("nearStatus").innerHTML=`<div class="status">${tr("locationFail")}</div>`;return}
-$("nearStatus").innerHTML=`<div class="status">${tr("geocoding")}</div>`;
+$("nearStatus").innerHTML=`<div class="status">📍 ${tr("gettingLocation")}</div>`;
 navigator.geolocation.getCurrentPosition(async pos=>{
-userLat=pos.coords.latitude;userLon=pos.coords.longitude;
-await geocodeMissing();renderNearbyDistance();
+ userLat=pos.coords.latitude; userLon=pos.coords.longitude;
+ $("nearStatus").innerHTML=`<div class="status">📍 ${tr("locationFound")} (${userLat.toFixed(4)}, ${userLon.toFixed(4)})<br>${tr("geocoding")}</div>`;
+ await geocodeMissing(20);
+ renderNearbyDistance();
 },()=>{$("nearStatus").innerHTML=`<div class="status">${tr("locationFail")}</div>`},{enableHighAccuracy:true,timeout:15000,maximumAge:60000});
 }
-async function geocodeMissing(){
-let missing=people.filter(p=>p.place&&(!Number.isFinite(p.lat)||!Number.isFinite(p.lon)));
+async function geocodeMissing(limit=20){
+let missing=people.filter(p=>p.place&&(!Number.isFinite(p.lat)||!Number.isFinite(p.lon))).slice(0,limit);
 let found=0;
 for(let i=0;i<missing.length;i++){
-let p=missing[i],q=p.place;
-if(!/[Mm]iri|Lutong|Sarawak|Malaysia/i.test(q))q+=", Miri, Sarawak, Malaysia";
-try{
-let url="https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q="+encodeURIComponent(q);
-let r=await fetch(url,{headers:{Accept:"application/json"}});
-let j=await r.json();
-if(j[0]){p.lat=Number(j[0].lat);p.lon=Number(j[0].lon);found++;}
-}catch(e){}
-$("nearStatus").innerHTML=`<div class="status">${tr("geocoding")} ${i+1}/${missing.length}</div>`;
-await new Promise(r=>setTimeout(r,1100));
+ let p=missing[i],q=p.place;
+ if(!/[Mm]iri|Lutong|Sarawak|Malaysia/i.test(q))q+=", Miri, Sarawak, Malaysia";
+ try{
+  let url="https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q="+encodeURIComponent(q);
+  let r=await fetch(url,{headers:{Accept:"application/json"}}); let j=await r.json();
+  if(j[0]){p.lat=Number(j[0].lat);p.lon=Number(j[0].lon);found++;}
+ }catch(e){}
+ $("nearStatus").innerHTML=`<div class="status">${tr("geocoding")} ${i+1}/${missing.length} — ${tr("geocoded")} ${found}</div>`;
+ await new Promise(r=>setTimeout(r,1100));
 }
 if(found)save();
-$("nearStatus").innerHTML=`<div class="status">${found}${tr("geocoded")}</div>`;
+let remaining=people.filter(p=>p.place&&(!Number.isFinite(p.lat)||!Number.isFinite(p.lon))).length;
+$("nearStatus").innerHTML=`<div class="status">${found}${tr("geocoded")} ${remaining?"｜"+remaining+tr("remaining"):tr("nearReady")}</div>`;
+$("nearbyCount").textContent=people.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)).length;
 }
 function renderNearbyDistance(){
 let q=$("search").value.trim().toLowerCase();
@@ -139,6 +143,6 @@ function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader
 applyLang();render();
 </script>
 <script>
-if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js?v=4").catch(()=>{}));
 </script>
 </body></html>
